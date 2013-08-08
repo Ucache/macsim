@@ -806,6 +806,10 @@ void dcu_c::process_in_queue()
     if (m_level == MEM_L3 && req->m_bypass == true) {
       line = NULL;
       cache_hit = false;
+      //constd added!
+      //change the req m_msg_state to NOC_LAST to specify reqs 
+      //that need bypass LLC
+      //req->m_msg_state = NOC_LAST;
     }
     else if (!m_disable) {
       // for wb request, do not update lru state in case of the hit
@@ -931,6 +935,15 @@ void dcu_c::process_in_queue()
         DEBUG("L%d[%d] (in_queue->out_queue) req:%d type:%s access miss\n", 
             m_level, m_id, req->m_id, mem_req_c::mem_req_type_name[req->m_type]);
         req->m_state = MEM_OUTQUEUE_NEW;
+        //constd added
+        //sepcify the req that need bypass the LLC
+        if (req->m_bypass){
+            req->m_state = MEM_STATE_MAX;
+            //printf("catch: a req:%lld is set to bypass the LLC, state set to %d\n",req->m_addr, MEM_STATE_MAX);
+            //report("catch @ dcu::process_in_queue, req:"<<req->m_addr<<"is set to bypass the LLC, state is set to "<<MEM_STATE_MAX<<" req msg type is "<<req->m_msg_type<<"\n");
+            fprintf(m_simBase->g_mystdout,"catch @ dcu::process_in_queue, req:%lld is set to bypass the LLC, state is set to %d, req msg type is %d \n",req->m_addr,MEM_STATE_MAX,req->m_msg_type);
+        }
+        //constd added ended
         req->m_rdy_cycle = m_cycle + 1;
       }
 
@@ -943,6 +956,7 @@ void dcu_c::process_in_queue()
   // -------------------------------------
   // Delete processed requests from the queue
   // -------------------------------------
+
   for (auto I = done_list.begin(), E = done_list.end(); I != E; ++I) {
     m_in_queue->pop((*I));
     if ((*I)->m_done == true) {
@@ -997,6 +1011,12 @@ void dcu_c::receive_packet(void)
       else if (req->m_msg_type == NOC_NEW || req->m_msg_type == NOC_NEW_WITH_DATA) {
         insert_done = insert(req);
       }
+      //constd added
+      else if (req->m_msg_type == NOC_LAST){
+          //printf("req:%lld returns to the dcu by dcu::receive_packet(),with msg type %d",req->m_addr, NOC_LAST);
+          report("catch @ dcu::receive_packet, req:"<< req->m_addr<<" returns to dcu with req state"<<req->m_state<<" msg type is "<<req->m_msg_type<<"\n");
+      }
+      //constd added ended
       else {
         assert(0);
       }
@@ -1152,6 +1172,21 @@ void dcu_c::process_out_queue()
       done_list.push_back(req);
       ++count;
     }
+    //constd added
+    else if (req->m_state == MEM_STATE_MAX){
+        //printf("catch:req state is %d.\n",MEM_STATE_MAX);
+        report("catch @ dcu::process_wb_queue, req:"<<req->m_addr<<" state is "<<req->m_state<<" req msg type is "<<req->m_msg_type<<"\n");
+        if (!send_packet(req, NOC_LAST,1))
+            continue;
+        //printf("req: msg state is %d, send_packet is called.\n",NOC_LAST);
+        report ("catch @ dcu::process_wb_queue, after dcu:;send_packet is called , req:"<<req->m_addr<<"req state is "<<req->m_state<<" msg type is set to "<<req->m_msg_type<<"\n");
+        DEBUG("L%d[%d]->L%d[%d] (out_queue->noc) req:%d type:%s(fill)\n", 
+            m_level, m_id, m_level+1, req->m_cache_id[m_level+1], req->m_id, 
+            mem_req_c::mem_req_type_name[req->m_type]);
+        done_list.push_back(req);
+        ++count;
+    }
+    //end of constd added
     else
       ASSERT(0);
   }
@@ -2249,16 +2284,29 @@ bool memory_c::receive(int src, int dst, int msg, mem_req_s* req)
   else if (level == MEM_L3) {
     if (msg == NOC_FILL) {
       result = m_l3_cache[id]->fill(req);
+        fprintf(m_simBase->g_mystdout,"catch @ memory_c::receive, req:%lld is set to fill the LLC, state is set to %d, req msg type is %d \n",req->m_addr,MEM_STATE_MAX,req->m_msg_type);
     }
     else if (msg == NOC_NEW || msg == NOC_NEW_WITH_DATA) {
       result = m_l3_cache[id]->insert(req);
+        fprintf(m_simBase->g_mystdout,"catch @ memory_c::receive, req:%lld is set to insert the LLC, state is set to %d, req msg type is %d \n",req->m_addr,MEM_STATE_MAX,req->m_msg_type);
     }
+    //constd added
+    else if (msg == NOC_LAST){
+        fprintf(m_simBase->g_mystdout,"catch @ dcu::process_in_queue, req:%lld is set to bypass the LLC, state is set to %d, req msg type is %d \n",req->m_addr,MEM_STATE_MAX,req->m_msg_type);
+        report("catch @ memory_c::receive, req:"<<req->m_addr<<" returns to LLC, state is "<<req->m_state<<" msg type is "<<req->m_msg_type<<"\n");
+    }
+    //constd added ended
     else {
       ASSERTM(0, "msg is %d\n", msg);
     }
   }
   else if (level == MEM_MC) {
-    ASSERTM(msg == NOC_NEW || msg == NOC_NEW_WITH_DATA || msg == NOC_FILL, "msg:%d", msg);
+    //constd added 
+    ASSERTM(msg == NOC_NEW || msg == NOC_NEW_WITH_DATA || msg == NOC_FILL || msg == NOC_LAST, "msg:%d", msg);
+    //constd added ended
+    //deleted by constd
+    //ASSERTM(msg == NOC_NEW || msg == NOC_NEW_WITH_DATA || msg == NOC_FILL , "msg:%d", msg);
+    //deleted by constd,ended
     result = m_simBase->m_dram_controller[id]->insert_new_req(req);
 //    assert(0); // jaekyu (2-15-2012) this will be completely removed
     if (result) {
