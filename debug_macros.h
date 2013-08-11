@@ -57,6 +57,17 @@ POSSIBILITY OF SUCH DAMAGE.
 #define report(x) {}
 #endif
 
+#define report_req(x) cout << __FILE__ << ":" << __LINE__ \
+  << ": (I=" << unsstr64(m_simBase->m_core0_inst_count) \
+  << "  C="  << unsstr64(m_simBase->m_simulation_cycle) << "):  " << x <<" req:"<<req->m_addr<<" state:"<<req->m_state<<" msg type:"\
+  << req->m_msg_type<<" msg src:" << req->m_msg_type<<" msg dst:"<<req->m_msg_dst << " msg noc type:" << req->m_noc_type << "\n";
+
+#define dprintf(x) \
+    if (m_level == MEM_L3) \
+    { \
+        printf(x); \
+    }
+
 #ifndef NO_REPORT
 // printf statement + file and line information
 #define REPORT(args...)                                     \

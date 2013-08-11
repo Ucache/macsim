@@ -367,6 +367,10 @@ void dram_controller_c::init(int id, int noc_id)
 // insert a new request from the memory system
 bool dram_controller_c::insert_new_req(mem_req_s* mem_req)
 {
+  //constd added 
+  mem_req_s* req = mem_req;
+  report_req("Catch @ dram_controller::insert_new_req");
+  //constd added ended
   // address parsing
   Addr addr = mem_req->m_addr;
   int bid_xor;
@@ -412,6 +416,9 @@ bool dram_controller_c::insert_new_req(mem_req_s* mem_req)
   // insert a new request to DRB
   insert_req_in_drb(mem_req, bid, rid, cid);
   on_insert(mem_req, bid, rid, cid);
+  //constd added 
+  report_req("Catch @")
+  //constd added ended
 
   STAT_EVENT(TOTAL_DRAM);
 
@@ -708,6 +715,7 @@ void dram_controller_c::send_packet(void)
       req_type_checked[req->m_ptx] = true;
       req->m_msg_type = NOC_FILL;
       req->m_msg_src = m_noc_id;
+      report_req("Catch @dram_controller_c::send_packet,");
 
 #ifdef IRIS
       req->m_msg_src = m_terminal->node_id;
@@ -784,6 +792,7 @@ void dram_controller_c::receive_packet(void)
 #else // #ifndef IRIS
   else if (*KNOB(KNOB_ENABLE_NEW_NOC)) {
     mem_req_s* req = m_router->receive_req(0);
+    //report_req("Catch @dram_controller_c::receive_packet ");
     if (!req)
       return ;
 #ifndef DRAMSIM
@@ -859,6 +868,7 @@ drb_entry_s* dram_controller_c::schedule(list<drb_entry_s*> *buffer)
 // schedule dram channels.
 void dram_controller_c::channel_schedule(void)
 {
+  //report("Catch @dram_controller:;channel_schedule");
   channel_schedule_cmd();
   channel_schedule_data();
 }

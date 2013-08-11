@@ -797,6 +797,14 @@ void dcu_c::process_in_queue()
     }
 
 
+    // constd added
+    // for each cache access to llc, we should first update the BDCT in obm_c.
+    if(m_level == MEM_L2 )
+    {
+        Addr line_addr_unuse;
+        m_memory -> m_rht_cache[req -> m_core_id] -> access_rht(req -> m_addr, req -> m_pc,&line_addr_unuse);
+    }
+
     // -------------------------------------
     // Cache access
     // -------------------------------------
@@ -834,6 +842,8 @@ void dcu_c::process_in_queue()
         POWER_CORE_EVENT(req->m_core_id, POWER_DCACHE_R + (m_level -1));
       }
       else {
+          report("Catch @dcu::process_in_queue:HIT req:"<<req->m_addr<<" state:"<<req->m_state<<" msg type:"<<req->m_msg_type
+                  <<" src:"<<req->m_msg_src<<" dst:"<<req->m_msg_dst);
         POWER_EVENT(POWER_L3CACHE_R );
       }
 
@@ -900,6 +910,22 @@ void dcu_c::process_in_queue()
     // Cache miss or Disabled cache
     // -------------------------------------
     else {
+      //cache miss in the cache 
+      // constd added        
+        if(m_level == MEM_L2 )
+        {
+            Addr line_addr_unuse;
+            m_memory -> m_rht_cache[req -> m_core_id] -> access_rht_on_cache_miss(req -> m_addr, req -> m_pc,&line_addr_unuse);
+            bool record_or_not = m_memory -> m_rht_cache[req -> m_core_id] -> record(req,line_addr_unuse);
+            req -> m_bypass = m_memory -> m_rht_cache[req -> m_core_id] -> bypass(req -> m_pc);
+        }
+        if (m_level == MEM_L3 && !cache_hit && !m_disable)
+        {
+          report("Catch @dcu::process_in_queue:MISS req:"<<req->m_addr<<" state:"<<req->m_state<<" msg type:"<<req->m_msg_type
+                  <<" src:"<<req->m_msg_src<<" dst:"<<req->m_msg_dst);
+        }
+     //constd added ended
+
       // hardware prefetcher training
       if (!m_disable) {
         m_simBase->m_core_pointers[req->m_core_id]->train_hw_pref(m_level, req->m_thread_id, \
@@ -935,13 +961,22 @@ void dcu_c::process_in_queue()
         DEBUG("L%d[%d] (in_queue->out_queue) req:%d type:%s access miss\n", 
             m_level, m_id, req->m_id, mem_req_c::mem_req_type_name[req->m_type]);
         req->m_state = MEM_OUTQUEUE_NEW;
+        //constd debug added
+        if(m_level == MEM_L3)
+        {
+            //fprintf(m_simBase->g_mystdout,"         req:%lld, is sent to m_out_queue and m_state changed to %d \n",
+            //        req->m_addr,req->m_state);
+            report("Catch @dcu::process_in_queue, req:"<<req->m_addr<<" is sent to m_out_queue, m_state changed to "<<req->m_state);
+        }
+        //constd debug added ended
         //constd added
         //sepcify the req that need bypass the LLC
         if (req->m_bypass){
             req->m_state = MEM_STATE_MAX;
             //printf("catch: a req:%lld is set to bypass the LLC, state set to %d\n",req->m_addr, MEM_STATE_MAX);
             //report("catch @ dcu::process_in_queue, req:"<<req->m_addr<<"is set to bypass the LLC, state is set to "<<MEM_STATE_MAX<<" req msg type is "<<req->m_msg_type<<"\n");
-            fprintf(m_simBase->g_mystdout,"catch @ dcu::process_in_queue, req:%lld is set to bypass the LLC, state is set to %d, req msg type is %d \n",req->m_addr,MEM_STATE_MAX,req->m_msg_type);
+           report("catch @ dcu::process_in_queue, req:"<<req->m_addr<<" is set to bypass the LLC, state is set to "<<req->m_state<<", req msg type is "<<req->m_msg_type);
+            //fprintf(m_simBase->g_mystdout,"catch @ dcu::process_in_queue, req:%lld is set to bypass the LLC, state is set to %d, req msg type is %d \n",req->m_addr,MEM_STATE_MAX,req->m_msg_type);
         }
         //constd added ended
         req->m_rdy_cycle = m_cycle + 1;
@@ -1078,9 +1113,17 @@ bool dcu_c::send_packet(mem_req_s* req, int msg_type, int dir)
   int dst = m_memory->get_dst_id(m_level+dir, req->m_cache_id[m_level+dir]);
   if (*KNOB(KNOB_ENABLE_NEW_NOC)) {
     packet_insert = m_router->inject_packet(req);
+    //constd debug added 
+    report("Catch @dcu::send_packet mem level:"<<m_level<<", req:"<<req->m_addr<<", m_router->inject_packet(req),req state:"<<req->m_state<<", msg type:"<<req->m_msg_type<<", noc type:"<<req->m_noc_type);
+    //fprintf(m_simBase->g_mystdout,"Catch @dcu::send_packet, req:%lld, m_router->inject_packet(req), msg type:%d, noc type:%d\n",
+    //        req->m_addr,req->m_msg_type,req->m_noc_type);
+    //constd debug added ended
   }
   else {
     packet_insert = m_simBase->m_noc->insert(m_noc_id, dst, msg_type, req);  
+    report("Catch @dcu::send_packet, req:"<<req->m_addr<<", m_noc>insert( , , ,req), msg type:"<<req->m_msg_type<<", noc type:"<<req->m_noc_type);
+    //fprintf(m_simBase->g_mystdout,"Catch @dcu::send_packet, req:%lld, m_noc>insert(%d,%d,%d,req), msg type:%d, noc type:%d\n",
+    //        req->m_addr,m_noc_id,dst,msg_type,req->m_msg_type,req->m_noc_type);
   }
 #endif
 
@@ -1116,11 +1159,16 @@ void dcu_c::process_out_queue()
       continue;
 
     ASSERT(m_has_router == true);
-
+    //constd added 
+    if (m_level == MEM_L3)
+    report_req("Catch @dcu::process_out_queue, m_level="<<MEM_L3);
+    //constd added ended
     // -------------------------------------
     // NEW request : send to lower level
     // -------------------------------------
     if (req->m_state == MEM_OUTQUEUE_NEW) {
+        //constd debug added 
+        //fprintf(m_simBase->g_mystdout,"         ")
       int msg_type;
       if (req->m_ptx && *m_simBase->m_knobs->KNOB_COMPUTE_CAPABILITY == 2.0f
           && req->m_with_data && m_level != MEM_L3) {
@@ -1129,12 +1177,25 @@ void dcu_c::process_out_queue()
       }
       else {
         msg_type = NOC_NEW;
+        //constd debug added
+        report("Catch @dcu::process_out_queue, mem level:"<<m_level<<", req:"<<req->m_addr<<" state:"<<req->m_state<<" msg type:"
+                <<req->m_msg_type<<" src:"<<req->m_msg_src<<" dst:"<<req->m_msg_dst);
+        report(" req:"<<req->m_addr<<", state is:"<<req->m_state<<" msg type is chenged to "<<msg_type);
+        //constd debug added ended
       }
       if (!send_packet(req, msg_type, 1))
         continue;
+      report_req(" Catch send_packet @dcu::process_out_queue");
       DEBUG("L%d[%d]->L%d[%d] (out_queue->noc) req:%d type:%s (new)\n", 
           m_level, m_id, m_level+1, req->m_cache_id[m_level+1], req->m_id, 
           mem_req_c::mem_req_type_name[req->m_type]);
+      //constd debug added
+      if (m_level == MEM_L3)
+      {
+          //fprintf(m_simBase->g_mystdout," req:%lld is send to NOC\n",req->m_addr);
+          report(" req:"<<req->m_addr<<" is send to NOC");
+      }
+      //constd debug added ended
       done_list.push_back(req);
       ++count;
     }
@@ -1151,9 +1212,10 @@ void dcu_c::process_out_queue()
       else {
         msg_type = NOC_FILL;
       }
-
+      report_req(" Catch @dcu::process_out_queue, req state is : MEM_OUT_FILL");
       if (!send_packet(req, msg_type, -1))
         continue;
+      report_req(" Catch send_packet @dcu::process_out_queue");
       DEBUG("L%d[%d]->L%d[%d] (out_queue->noc) req:%d type:%s(fill)\n", 
           m_level, m_id, m_level-1, req->m_cache_id[m_level-1], req->m_id, 
           mem_req_c::mem_req_type_name[req->m_type]);
@@ -1164,8 +1226,10 @@ void dcu_c::process_out_queue()
     // WB request : send to lower level
     // -------------------------------------
     else if (req->m_state == MEM_OUT_WB) {
+      report_req(" Catch @dcu::process_out_queue, req state is : MEM_OUT_WB");
       if (!send_packet(req, NOC_FILL, 1))
         continue;
+      report_req(" Catch send_packet @dcu::process_out_queue");
       DEBUG("L%d[%d]->L%d[%d] (out_queue->noc) req:%d type:%s(fill)\n", 
           m_level, m_id, m_level+1, req->m_cache_id[m_level+1], req->m_id, 
           mem_req_c::mem_req_type_name[req->m_type]);
@@ -1175,11 +1239,11 @@ void dcu_c::process_out_queue()
     //constd added
     else if (req->m_state == MEM_STATE_MAX){
         //printf("catch:req state is %d.\n",MEM_STATE_MAX);
-        report("catch @ dcu::process_wb_queue, req:"<<req->m_addr<<" state is "<<req->m_state<<" req msg type is "<<req->m_msg_type<<"\n");
+        report(" catch @ dcu::process_wb_queue, req:"<<req->m_addr<<" state is "<<req->m_state<<" req msg type is "<<req->m_msg_type<<"\n");
         if (!send_packet(req, NOC_LAST,1))
             continue;
         //printf("req: msg state is %d, send_packet is called.\n",NOC_LAST);
-        report ("catch @ dcu::process_wb_queue, after dcu:;send_packet is called , req:"<<req->m_addr<<"req state is "<<req->m_state<<" msg type is set to "<<req->m_msg_type<<"\n");
+        report (" catch @ dcu::process_wb_queue, after dcu:;send_packet is called , req:"<<req->m_addr<<"req state is "<<req->m_state<<" msg type is set to "<<req->m_msg_type<<"\n");
         DEBUG("L%d[%d]->L%d[%d] (out_queue->noc) req:%d type:%s(fill)\n", 
             m_level, m_id, m_level+1, req->m_cache_id[m_level+1], req->m_id, 
             mem_req_c::mem_req_type_name[req->m_type]);
@@ -1248,7 +1312,10 @@ void dcu_c::process_fill_queue()
     else {
       POWER_EVENT(POWER_L3CACHE_LINEFILL_BUF_R );
     }
-
+    //constd added
+    if (m_level == MEM_L3)
+        report_req("Catch @dcu::process_fill_queue, m_level= "<<MEM_L3);
+    //constd added ended
 
     // MEM_FILL_NEW
     // MEM_FILL_WAIT_DONE
@@ -1261,11 +1328,16 @@ void dcu_c::process_fill_queue()
         Addr line_addr, victim_line_addr;
         dcache_data_s* line = NULL;
         bool cache_hit = true;
-
+        //constd added
+        if (m_level == MEM_L3)
+        printf(" req state is:MEM_FILL_NEW. \n");
+        //constd end
         // Access cache to check whether there is the same line in the cache.
         if (!m_disable) {
           line = (dcache_data_s*)m_cache->access_cache(req->m_addr, &line_addr, false, req->m_appl_id);
           cache_hit = (line) ? true: false;
+          if (m_level == MEM_L3)
+          printf(" access dcache to check if there is the same line in the cache. \n");
         }
 
         if (!cache_hit) { // !cache_hit
@@ -1281,7 +1353,8 @@ void dcu_c::process_fill_queue()
           // -------------------------------------
           dcache_data_s* data;
           data = (dcache_data_s*)m_cache->insert_cache(req->m_addr, &line_addr, &victim_line_addr, req->m_appl_id, req->m_ptx);
-
+          if (m_level == MEM_L3)
+          printf(" insert the data in dcache. \n");
           if (m_level != MEM_L3) {
             POWER_CORE_EVENT(req->m_core_id, POWER_DCACHE_W + (m_level -1));
           }
@@ -1293,7 +1366,10 @@ void dcu_c::process_fill_queue()
           // If there is a victim line, we do the write-back.
           // -------------------------------------
           if (victim_line_addr) {
+              if (m_level == MEM_L3)
+              std::cout<<" there is a vectim line, address:"<<line_addr<<std::endl;
             if (data->m_dirty) {
+                dprintf(" and the victim line is drity.\n");
               if (*(m_simBase->m_knobs->KNOB_USE_INCOMING_TID_CID_FOR_WB)) {
                 data->m_core_id = req->m_core_id;
                 data->m_tid = req->m_thread_id;
@@ -1302,7 +1378,8 @@ void dcu_c::process_fill_queue()
               // new write-back request
               mem_req_s* wb = m_simBase->m_memory->new_wb_req(victim_line_addr, m_line_size, 
                   m_ptx_sim, data, m_level);
-
+              if(m_level == MEM_L3)
+              std::cout<<" create a new write back request, wb address:"<<wb->m_addr<<std::endl;
               if (!m_wb_queue->push(wb))
                 ASSERT(0);
 
@@ -1329,7 +1406,10 @@ void dcu_c::process_fill_queue()
           data->m_tid         = req->m_thread_id;
         }
         else if (line != NULL) {
+          dprintf(" unfotunatlly, there is a same line in dcache,");
           line->m_dirty |= req->m_dirty;
+          if(m_level == MEM_L3)
+          std::cout<<" and the line is dirty? "<<line->m_dirty<<std::endl;
         }
 
         // L2: done function has been called in this level
@@ -1375,9 +1455,11 @@ void dcu_c::process_fill_queue()
           else {
             if (!m_out_queue->push(req)) {
               req->m_state = MEM_FILL_WAIT_FILL;
+              dprintf(" m_out_queue is full, req state changed to MEM_FILL_WAIT_FILL\n");
               continue;
             }
             req->m_state = MEM_OUT_FILL;
+              dprintf(" req is push into the m_out_queue ,req state changed to MEM_FILL_WAIT_FILL\n");
             DEBUG("L%d[%d] (fill_queue->out_queue) hit:%d req:%d type:%s filled\n",
                 m_level, m_id, cache_hit, req->m_id, mem_req_c::mem_req_type_name[req->m_type]);
           }
@@ -1393,7 +1475,7 @@ void dcu_c::process_fill_queue()
       case MEM_FILL_WAIT_DONE: {
         if (req->m_done_func && !req->m_done_func(req))
           continue;
-
+        dprintf(" req state is: MEM_FILL_WAIT_DONE \n");
         req->m_done = true;
         done_list.push_back(req);
         ++count;
@@ -1404,6 +1486,7 @@ void dcu_c::process_fill_queue()
       // MEM_FILL_NEW -> MEM_FILL_WAIT_FILL : waiting for sending to next/prev level
       // -------------------------------------
       case MEM_FILL_WAIT_FILL: {
+        dprintf(" req state is: MEM_FILL_WAIT_FILL\n");
         // COUPLED L3 OR without router: fill upper level cache
         if ((m_coupled_up && m_prev_id == req->m_cache_id[m_level-1]) || !m_has_router) {
           if (!m_prev[req->m_cache_id[m_level-1]]->fill(req)) {
@@ -1418,9 +1501,11 @@ void dcu_c::process_fill_queue()
         else {
           if (!m_out_queue->push(req)) {
             req->m_state = MEM_FILL_WAIT_FILL;
+            dprintf(" the m_out_queue is full ,and state change to MEM_FILL_WAIT_FILL\n");
             continue;
           }
           req->m_state = MEM_OUT_FILL;
+            dprintf(" req is pushed to m_out_queue ,and state change to MEM_OUT_FILL\n");
           DEBUG("L%d[%d] (fill_queue->out_queue) req:%d type:%s filled\n",
               m_level, m_id, req->m_id, mem_req_c::mem_req_type_name[req->m_type]);
         }
@@ -1507,6 +1592,10 @@ void dcu_c::process_wb_queue()
       DEBUG("L%d[%d] req:%d type:%s send to busout queue\n", 
           m_level, m_id, req->m_id, mem_req_c::mem_req_type_name[req->m_type]);
       req->m_state = MEM_OUT_WB;
+      if(m_level == MEM_L3)
+      {
+          report_req(" Catch @dcu::process_wb_queue,m_level="<<MEM_L3);
+      }
     }
 
     done_list.push_back(req);
@@ -1770,24 +1859,28 @@ memory_c::memory_c(macsim_c* simBase)
   m_l1_cache = new dcu_c*[m_num_core]; 
   m_l2_cache = new dcu_c*[m_num_core]; 
   m_l3_cache = new dcu_c*[m_num_l3]; 
+  m_rht_cache = new obm_c*[m_num_core]; //constd added
 
   int id = 0;
   for (int ii = 0; ii < num_large_core; ++id, ++ii) {
     m_l1_cache[id] = new dcu_c(id, UNIT_LARGE, MEM_L1, this, id, m_l2_cache, NULL, simBase);
     m_l2_cache[id] = new dcu_c(id, UNIT_LARGE, MEM_L2, this, id + m_num_core, \
         m_l3_cache, m_l1_cache, simBase);
+    m_rht_cache[id] = new obm_c(id, this, simBase ); // constd added
   }
 
   for (int ii = 0; ii < num_medium_core; ++id, ++ii) {
     m_l1_cache[id] = new dcu_c(id, UNIT_MEDIUM, MEM_L1, this, id, m_l2_cache, NULL, simBase);
     m_l2_cache[id] = new dcu_c(id, UNIT_MEDIUM, MEM_L2, this, id + m_num_core, m_l3_cache, \
         m_l1_cache, simBase);
+    m_rht_cache[id] = new obm_c(id, this, simBase); // constd added
   }
 
   for (int ii = 0; ii < num_small_core; ++id, ++ii) {
     m_l1_cache[id] = new dcu_c(id, UNIT_SMALL, MEM_L1, this, id, m_l2_cache, NULL, simBase);
     m_l2_cache[id] = new dcu_c(id, UNIT_SMALL, MEM_L2, this, id + m_num_core, m_l3_cache, \
         m_l1_cache, simBase);
+    m_rht_cache[id] = new obm_c(id, this, simBase); // constd added
   }
 
 
@@ -1837,6 +1930,7 @@ memory_c::~memory_c()
   for (int ii = 0; ii < m_num_core; ++ii) {
     delete m_l1_cache[ii];
     delete m_l2_cache[ii];
+    delete m_rht_cache[ii]; //constd added
     m_mshr_free_list[ii].clear();
     m_mshr[ii].clear(); } for (int ii = 0; ii < m_num_l3; ++ii) {
     delete m_l3_cache[ii];
@@ -1846,6 +1940,7 @@ memory_c::~memory_c()
   delete[] m_mshr_free_list;
   delete[] m_l1_cache;
   delete[] m_l2_cache;
+  delete[] m_rht_cache; // constd added
   delete[] m_l3_cache;
 }
 
@@ -2140,6 +2235,12 @@ bool memory_c::new_mem_req(Mem_Req_Type type, Addr addr, uns size, bool cache_hi
     if (matching_req->m_priority < priority)
       matching_req->m_priority = priority;
 
+    //constd debug added 
+    report("Catch @memory_c::new_mem_req :req:"<<new_req->m_addr<<", state:"<<new_req->m_state<<", msg type is:"<<new_req->m_msg_type<<
+            ", core id:"<<new_req->m_core_id<<", ptx:"<<new_req->m_ptx);
+    //fprintf(m_simBase->g_mystdout,"Catch @memory_c::new_mem_req :req:%lld, state:%d, msg type is:%d, core id:%d, ptx:%d\n",
+    //        new_req->m_addr,new_req->m_state,new_req->m_msg_type,new_req->m_core_id,new_req->m_ptx);
+    //constd debug added ended
     return true;
   }
 
@@ -2716,6 +2817,7 @@ l3_coupled_network_c::l3_coupled_network_c(macsim_c* simBase) : memory_c(simBase
     m_l1_cache[ii]->init(ii, -1, false, false, true, false, false);
     m_l2_cache[ii]->init(ii, ii, true,  true,  true, false, true);
     m_l3_cache[ii]->init(-1, ii, false, true,  false,false, true);
+    m_rht_cache[ii]->init(false, false);//constd added
   }
 }
 
@@ -2734,6 +2836,7 @@ l3_decoupled_network_c::l3_decoupled_network_c(macsim_c* simBase) : memory_c(sim
   for (int ii = 0; ii < m_num_core; ++ii) {
     m_l1_cache[ii]->init(ii, -1, false, false, true,  false, false);
     m_l2_cache[ii]->init(-1, ii, true,  true,  false, false, true);
+    m_rht_cache[ii]->init(false, false);//constd added
   }
 
   for (int ii = 0; ii < m_num_l3; ++ii) {
@@ -2757,6 +2860,7 @@ l2_coupled_local_c::l2_coupled_local_c(macsim_c* simBase) : memory_c(simBase)
   for (int ii = 0; ii < m_num_core; ++ii) {
     m_l1_cache[ii]->init(ii, -1, false, false, true,  false, true);
     m_l2_cache[ii]->init(ii, ii, true,  true,  true,  false, true);
+    m_rht_cache[ii]->init(false, false);//constd added
     m_l3_cache[ii]->init(-1, ii, false, true,  false, true,  true);
   }
 }
@@ -2787,6 +2891,7 @@ no_cache_c::no_cache_c(macsim_c* simBase) : memory_c(simBase)
     //                   next_id, next,  prev_id, prev,  done,  cup,   cdown, disable
     m_l1_cache[ii]->init(ii, -1, false, false, true,  true, false);
     m_l2_cache[ii]->init(ii, ii, true,  true,  true,  true, true);
+    m_rht_cache[ii]->init(false, false);//constd added
     m_l3_cache[ii]->init(-1, ii, false, true,  false, true, true);
   }
 }
@@ -2815,6 +2920,7 @@ l2_decoupled_network_c::l2_decoupled_network_c(macsim_c* simBase) : memory_c(sim
   for (int ii = 0; ii < m_num_core; ++ii) {
     m_l1_cache[ii]->init(ii, -1, false, false, true,  false, false);
     m_l2_cache[ii]->init(-1, ii, true,  true,  false, true,  true);
+    m_rht_cache[ii]->init(false, false);//constd added
   }
 
   for (int ii = 0; ii < m_num_l3; ++ii) { 
@@ -2863,6 +2969,7 @@ l2_decoupled_local_c::l2_decoupled_local_c(macsim_c* simBase) : memory_c(simBase
   for (int ii = 0; ii < m_num_core; ++ii) {
     m_l1_cache[ii]->init(ii, -1, !HAS_DONE_FUNC, !ULINK,  DLINK,  ENABLE, !HAS_ROUTER);
     m_l2_cache[ii]->init(-1, ii,  HAS_DONE_FUNC,  ULINK, !DLINK, !ENABLE, !HAS_ROUTER);
+    m_rht_cache[ii]->init(false, false);//constd added
   }
 
   for (int ii = 0; ii < m_num_l3; ++ii) { 
@@ -2887,4 +2994,304 @@ void l2_decoupled_local_c::set_cache_id(mem_req_s* req)
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
+//  \obm related function
+///////////////////////////////////////////////////////////////////////////////////////////////
+
+//obm constructor
+obm_c::obm_c(int id, memory_c* mem, macsim_c* simBase)
+{
+    m_simBase  = simBase;
+    //obm cache paramter setting
+    m_num_set = 8;// can be replased by *m_simBase->m_knobs->KNOB_L1_SMALL_NUM_SET;
+    m_assoc   = 16;//same with above
+    m_line_size = 64;//same with above
+    m_banks   = 8;// same with above
+    m_latency = 1; // same with above
+    m_bypass  = false; // same with above
+    m_num_read_port = 8; // can be replaced by *KNOB(KNOB_L1_READ_PORTS);
+    m_num_write_port = 8;
+    m_probability = 0;
+    m_id      = id;
+    m_memory = mem;
+
+    m_cycle   = 0;
+
+}
+
+obm_c::~obm_c()
+{
+    if(m_disable)
+        return ;
+    delete m_rht;
+    for(int ii = 0;ii< m_banks; ++ii)
+        delete m_port[ii];
+    delete[] m_port;
+}
+
+void obm_c::init(bool done, bool disable)
+{
+    m_done      =    done;
+    m_disable   =    disable;
+
+    if(!m_disable)
+    {
+        m_rht = new rht_c("rht_cache", m_num_set, m_assoc, m_line_size, sizeof(rht_data_s), m_banks,false, m_id, CACHE_RHT,false,  m_simBase);
+
+        //allocate port 
+        m_port = new port_c* [m_banks];
+        for (int ii = 0; ii< m_banks; ++ii)
+        {
+            m_port[ii] = new port_c("rht_port", m_num_read_port, m_num_write_port, false, m_simBase);
+        }
+    }
+    
+    if (m_bypass == true)
+    {
+        m_disable = true;
+    }
+}
+
+
+// get line size
+int obm_c:: line_size()
+{
+    return m_line_size;
+}
+
+
+//get line address
+Addr obm_c::base_addr(Addr addr)
+{
+    return (addr & ~63);
+}
+
+// get bank id
+int obm_c::bank_id(Addr addr)
+{
+    return BANK(addr , m_banks, 256);
+}
+
+// acquire read port
+int  obm_c::get_read_port(int bank_id)
+{
+    return m_port[bank_id] -> get_read_port(m_cycle); 
+}
+
+//access the rht
+bool obm_c::access_rht(Addr addr,Signature sig, Addr *line_addr)
+{
+    vector<void*>::iterator iter;
+    vector<void*> vec = m_rht -> access_rht_set(addr);
+    
+    int set;
+    Addr tag;
+    m_rht->find_tag_and_set(addr, &tag, &set);
+
+    for (iter = vec.begin(); iter != vec.end();++iter)
+    {
+        //rht_data_s* data = (rht_data_s*) vec[iter];
+        rht_data_s* data = (rht_data_s*) *iter;
+        //if(line -> m_valid == false)
+        //    return false;
+        if( data -> m_ib_tag == tag )
+        {
+            map<Signature, int>::iterator itr = BDCT.find(sig);
+            if(itr == BDCT.end())
+            {
+                BDCT[sig] = 0;
+            }
+            else
+            {
+                BDCT[sig]--;
+            }
+            //invalid rht entry line
+            //m_rht -> invalidate_cache_line()
+            m_rht -> invalidate_cache_line(addr);
+            return true;
+        }
+        else
+        {
+            if (data -> m_vb_tag == tag)
+            {
+                BDCT[sig]++;
+                m_rht -> invalidate_cache_line(addr);
+                return true;
+            }
+        }
+    }
+    //return (rht_data_s*)m_rht -> access_cache(addr, line_addr, false, -1);
+}
+
+//access rht in case of a cache miss occured in dcache
+bool obm_c::access_rht_on_cache_miss(Addr addr, Signature sig, Addr *line_addr)
+{
+    vector<void*>::iterator iter;
+    vector<void*> vec = m_rht -> access_rht_set(addr);
+    
+    int set;
+    Addr tag;
+    m_rht->find_tag_and_set(addr, &tag, &set);
+
+    for (iter = vec.begin(); iter != vec.end();++iter)
+    {
+        //rht_data_s* data = (rht_data_s*) vec[iter];
+        rht_data_s* data = (rht_data_s*) *iter;
+        //if(line -> m_valid == false)
+        //    return false;
+        if( data -> m_ib_tag == tag )
+        {
+                BDCT[sig]++;
+            //invalid rht entry line
+            //m_rht -> invalidate_cache_line()
+            m_rht -> invalidate_cache_line(addr);
+            return true;
+        }
+    }
+    //return (rht_data_s*)m_rht -> access_cache(addr, line_addr, false, -1);
+}
+
+bool obm_c::record(mem_req_s* req,Addr repl_addr)
+{
+    Addr demand_addr = req -> m_addr;
+    int set;
+    Addr tag;
+    int repl_set;
+    Addr repl_tag;
+
+    m_rht ->find_tag_and_set(demand_addr, &tag, &set);
+    m_rht ->find_tag_and_set(repl_addr, &repl_tag, &repl_set);
+
+    rht_data_s* data = (rht_data_s*)m_rht -> has_invalid_entry(demand_addr);
+    //has invalid cache entry in replacement history table
+    if(data)
+    {
+       data ->m_core_id = req ->m_core_id;
+       data ->m_pc      = req ->m_pc;
+       data ->m_ib_tag  = tag;
+       data ->m_vb_tag  = repl_tag;
+       data ->m_ib_signature = req -> m_pc; 
+       return true;
+    }
+    else
+    {
+        if(m_probability++ % 512 == 0)
+        {
+            Addr line_addr;
+            Addr updated_line;
+            rht_data_s* data = (rht_data_s*) m_rht -> insert_cache(demand_addr,&line_addr,&updated_line,-1,false,false); 
+            if(data)
+            {
+               data ->m_core_id = req ->m_core_id;
+               data ->m_pc      = req ->m_pc;
+               data ->m_ib_tag  = tag;
+               data ->m_vb_tag  = repl_tag;
+               data ->m_ib_signature = req -> m_pc; 
+               return true;
+            }
+        }
+    }
+    return false;
+}
+//check if the corresponding set has at least an invalid entry
+//bool obm_c::has_invalid_entry(Addr addr, cache_entry_c* victim_line)
+//{
+//    int set ;
+//    Addr tag;
+//    
+//    m_rht -> find_tag_and_set( addr, &tag, &set);
+//
+//    for(int ii = 0; ii < m_assoc; ++ii)
+//    {
+//        victim_line  = &(m_rht -> m_set[set] -> m_entry[ii]);
+//        if (!victim_line -> m_valid)
+//        {
+//            //assert(line -> m_data);
+//            return true;
+//        }
+//    }
+//
+//    return false;
+//}
+
+// according to the given address , select a victim from the correspoding set
+//bool obm_c::select_victim(Addr addr, cache_entry_c* victim_line)
+//{
+//    int set;
+//    Addr addr;
+//    //cache_entry_c* victim_line;
+//
+//    m_rht -> find_tag_and_set(addr, &tag, &set);
+//    victim_line = m_rht -> find_replacement_line(set,-1); //appl_id is -1 here
+//    if (victim_line)
+//        return true;
+//}
+
+// if record addr then return the victim line address
+//bool obm_c::record(Addr addr, cache_entry_c* victim_line )
+//{
+//    if (has_invalid_entry(addr,&victim_line))
+//    {
+//        return true;
+//    }
+//    else 
+//    {
+//        //do some random selection and then return the cache_entry_c  
+//        //if(random_function() > given_gailv)
+//        //{
+//            return select_victim(addr,&victim_line);
+//        //}
+//    }
+//
+//    return NULL;
+//}
+
+//insert a new line in replacement history table
+//void obm_c::insert(Addr demand_access, Signature sig, Addr pc)
+//{
+//    int set;
+//    Addr tag;
+//    m_rht -> find_tag_and_set(demand_access, &tag, &set);
+//
+//    cache_entry_c* ins_line ;
+//    if(record(addr,ins_line))
+//    {
+//        
+//        //initialize the obm rht structure rht_data_s
+//        rht_data_s* rht_data;
+//        rht_data -> m_fetch_cycle = CYCLE;
+//        rht_data -> m_pc         = pc;
+//        rht_data -> m_ib_tag     = tag;
+//        rht_data -> m_vb_tag     = ins_line -> m_tag;
+//        rht_data -> m_ib_signature = sig;
+//        
+//
+//        //initialize a rht cache line
+//        ins_line -> m_valid      = true;
+//        ins_line -> m_tag        = tag;
+//        ins_line -> m_base       = (addr & ~(m_rht -> m_offset_mask));
+//        ins_line -> m_access_counter = 0;
+//        ins_line -> m_last_access_time = CYCLE;
+//        ins_line -> m_pref       = false;
+//        ins_line -> m_skip       = false;
+//        ins_line -> m_data       = rht_data;
+//    }
+//}
+
+//check whether the given signature bypass llc or not
+bool obm_c::bypass(Signature sig)
+{
+    map<Signature,int>::iterator iter = BDCT.end();
+    if (BDCT.find(sig) == iter)
+    {
+        return false;
+    }
+    else if(BDCT[sig] >= 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 

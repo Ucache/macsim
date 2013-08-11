@@ -1,0 +1,75 @@
+*** cache.h	2013-02-15 01:51:44.000000000 +0800
+--- /home/hero/bypassrelated/macsim/src/cache.h	2013-08-01 17:26:13.531533181 +0800
+***************
+*** 55,60 ****
+--- 55,61 ----
+    CACHE_CONST,
+    CACHE_TEXTURE,
+    CACHE_SW_MANAGED,
++   CACHE_RHT,
+    CACHE_BTB
+  } Cache_Type;
+  
+***************
+*** 85,90 ****
+--- 86,115 ----
+  };
+  
+  
++ 
++ 
++ ///////////////////////////////////////////////////////////////////////////////////////////////
++ /// \brief replacement history table(RTH) entry class   ***constd added***
++ ///////////////////////////////////////////////////////////////////////////////////////////////
++ //class rht_entry_c
++ //{
++ //  public:
++ //      bool      m_valid;
++ //      Addr      m_tag;            //!< tag of entry 
++ //      Counter   m_last_access_time; //!< for replacement policy
++ //      bool      m_pref;           //!< prefetch bit
++ //      bool      m_rp;             //!< replacement policy bit
++ //      void      *m_data;
++ //      //data part of rht entry
++ //      //Addr      m_ib_tag;         //!< incoming block tag
++ //      //Addr      m_vb_tag;         //!< victim block tag
++ //      //Signature m_ib_signature;   //!< incoming block signature. Here we use program counter(PC)
++ //      friend class rht_c;
++ //
++ //      rht_entry_c();
++ //};
++ 
++ 
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  /// \brief Cache set class
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+***************
+*** 114,119 ****
+--- 139,165 ----
+      
+  };
+  
++ ///////////////////////////////////////////////////////////////////////////////////////////////
++ /// \brief Cache set classi         ***constd added***
++ ///////////////////////////////////////////////////////////////////////////////////////////////
++ //class rht_set_c
++ //{
++ //    friend class rht_c;
++ //    public:
++ //    rht_set_c(int assoc);
++ //    ~rht_set_c();
++ //
++ //    public:
++ //    rht_entry_c* m_entry;
++ //    int m_assoc;
++ //    int m_num_cpu_line;
++ //    int m_num_gpu_line;
++ //
++ //    private:
++ //    rht_set_c();
++ //};
++ 
++ 
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  /// \brief Cache library class

@@ -1,0 +1,214 @@
+*** cache.cc	2013-02-15 01:51:44.000000000 +0800
+--- /home/hero/bypassrelated/macsim/src/cache.cc	2013-08-01 17:26:22.423532835 +0800
+***************
+*** 61,66 ****
+--- 61,70 ----
+  {
+  }
+  
++ //rht_entry_c::rht_entry_c()
++ //    :m_valid(false), m_last_access_time(0)
++ //{
++ //}
+  
+  cache_set_c::cache_set_c(int assoc)
+  {
+***************
+*** 68,78 ****
+--- 72,92 ----
+    m_assoc = assoc;
+  }
+  
++ //rht_entry_c::rht_set_c(int assoc)
++ //{
++ //    m_entry = new rht_entry_c[assoc];
++ //    m_assoc = assoc;
++ //}
++ 
+  cache_set_c::~cache_set_c()
+  {
+    delete m_entry;
+  }
+  
++ //rht_set_c::~rht_set_c()
++ //{
++ //    delete m_entry;
++ //}
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  
+***************
+*** 153,158 ****
+--- 149,213 ----
+    m_enable_partition = enable_partition;
+  }
+  
++ //rht constructor
++ //rht_c::rht_c(string name, int num_set, int assoc, int line_size, 
++ //     int bank_num, bool rht_turned_off, int core_id, Cache_Type cache_type_info,
++ //    bool enable_partition, macsim_c* simBase) 
++ //{
++ //  m_simBase = simBase;
++ //
++ //  DEBUG("Initializing cache called '%s'.\n", name.c_str());
++ //
++ //  // Setting Basic Parameters sent via caller
++ //  m_name        = name;
++ //  m_data_size  = data_size;
++ //  m_assoc      = assoc;
++ //  m_num_sets   = num_set;
++ //  m_line_size  = line_size;
++ //  m_cache_type = cache_type_info; 
++ //
++ //  // Setting some fields to make indexing quick
++ //  m_set_bits    = log2_int(num_set);
++ //  m_shift_bits  = log2_int(line_size); /* use for shift amt. */
++ //  m_set_mask    = N_BIT_MASK(log2_int(num_set)); /* use after shifting */
++ //  m_tag_mask    = ~m_set_mask;  /* use after shifting */
++ //  m_offset_mask = N_BIT_MASK(m_shift_bits); /* use before shifting */
++ //  m_bank_num    = bank_num; 
++ //
++ //  // Allocating memory for all the sets (pointers to line arrays)
++ //  m_core_id = core_id; 
++ //
++ //  // Allocating memory for all of the lines in each set
++ //  m_set = new rht_set_c* [m_num_sets];  
++ //
++ //  for (int ii = 0; ii < m_num_sets; ++ii) {
++ //    m_set[ii] = new rht_set_c(m_assoc); 
++ //
++ //    // Allocating memory for all of the data elements in each line
++ //    for (int jj = 0; jj < assoc; ++jj) {
++ //      m_set[ii]->m_entry[jj].m_valid          = false;
++ //     // m_set[ii]->m_entry[jj].m_access_counter = false;
++ //      if (data_size > 0) {
++ //        m_set[ii]->m_entry[jj].m_data = (void *)malloc(data_size);
++ //        memset(m_set[ii]->m_entry[jj].m_data, 0, data_size);
++ //      } 
++ //      else {
++ //        m_set[ii]->m_entry[jj].m_data = INIT_CACHE_DATA_VALUE;
++ //      }
++ //      //m_set[ii]-> m_entry[jj].m_ib_tag        = 0;
++ //      //m_set[ii]-> m_entry[jj].m_vb_tag        = 0;
++ //    }
++ //  }
++ //
++ //  // Initializing Last update count
++ //  m_rht_turned_off = rht_turned_off;
++ //
++ //  m_num_cpu_line = 0;
++ //  m_num_gpu_line = 0;
++ //  m_insert_count = 0;
++ //
++ //  m_enable_partition = enable_partition;
++ //}
+  
+  cache_c::~cache_c()
+  {
+***************
+*** 238,243 ****
+--- 295,398 ----
+    return NULL;
+  }
+  
++ 
++ //check if there is an invalid entry to record the incoming block.
++ //bool rht_c::has_invalid_entry()
++ //{
++ //    rht_entry_c     *line ;
++ //    for(int ii = 0; ii < m_num_sets; ++ii )
++ //    {
++ //        for(int jj = 0; jj < m_assoc; ++jj)
++ //        {
++ //            line = &(m_set[ii]-> m_entry[jj]);
++ //            if (line -> m_valid )
++ //                continue;
++ //            else
++ //                return true;
++ //        }
++ //    }
++ //
++ //    return false;
++ //}
++ 
++ 
++ //check if the given address need to be recorded
++ //bool rht_c::record(Addr addr)
++ //{
++ //    //there is at least one invalid entry
++ //    if (has_invalid_entry())
++ //    {
++ //        return true;
++ //    }
++ //    //no invalid entry, so we give a low probability to record the incoming miss
++ //    else
++ //    {
++ //        //here, give the implementation of low probability
++ //    }
++ //}
++ 
++ 
++ 
++ //void* rht_c::access_rht(Addr addr, Addr *line_addr, bool update_repl, int appl_id) 
++ //{
++ //  // Check if cache by pass is set. If so return NULL.
++ //  if (m_rht_turned_off)
++ //    return NULL;
++ //
++ //  Addr tag;
++ //  int set;
++ //
++ //  // Get Tag and set to check if the addr exists in cache
++ //  find_tag_and_set(addr, &tag, &set);
++ //  *line_addr = base_cache_line (addr);
++ //
++ //  if (update_repl)
++ //    update_cache_on_access(*line_addr, set, appl_id);
++ //
++ //  // Walk through the set
++ //  for (int ii = 0; ii < m_assoc; ++ii) {
++ //    // For each line in based on associativity
++ //    cache_entry_c * line = &(m_set[set]->m_entry[ii]);
++ //
++ //    // Check for matching tag and validity
++ //    if (line->m_valid && line->m_tag == tag) {
++ //      // If hit, then return  
++ //      assert(line->m_data);
++ //
++ //      if (update_repl) {
++ //        // If prefetch is set mark it as used  
++ //        if (line->m_pref) {
++ //          line->m_pref = false;
++ //        }
++ //        update_line_on_hit(line, set, appl_id);
++ //      }   
++ //
++ //      return line->m_data;
++ //    }
++ //  }
++ //
++ //  if (update_repl)
++ //    update_cache_on_miss(set, appl_id);
++ //
++ //  return NULL;
++ //}
++ 
++ //void rht_c::update_cache_on_access(Addr line_addr, int set, int appl_id)
++ //{
++ //}
++ //
++ //
++ //void rht_c::update_line_on_hit(cache_entry_c* line, int set, int appl_id)
++ //{
++ //  line->m_last_access_time = CYCLE;
++ //}
++ //
++ //
++ //void rht_c::update_cache_on_miss(int set_id, int appl_id)
++ //{
++ //  // do nothing
++ //}
++ 
+  void cache_c::update_cache_on_access(Addr line_addr, int set, int appl_id)
+  {
+  }

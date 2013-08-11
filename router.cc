@@ -367,7 +367,10 @@ bool router_c::inject_packet(mem_req_s* req)
       if (req->m_msg_src < req->m_msg_dst) {
         if (m_ds_injection_buffer.size() < m_ds_injection_buffer_max_size) {
           m_ds_injection_buffer.push(req);
-
+          //constd debug added
+          report("Catch @router_c::inject_packet, m_ds_injection_buffer.push(req): state:"<<req->m_state<<" msg type:"<<req->m_msg_type
+                  <<" noc type:"<<req->m_noc_type);
+          //constd debug added ended
           DEBUG("cycle:%-10lld node:%d [IP] req_id:%d src:%d dst:%d insert success\n",
               m_cycle, m_id, req->m_id, req->m_msg_src, req->m_msg_dst);
 
@@ -385,6 +388,8 @@ bool router_c::inject_packet(mem_req_s* req)
         if (m_us_injection_buffer.size() < m_us_injection_buffer_max_size) {
           m_us_injection_buffer.push(req);
 
+          report("Catch @router_c::inject_packet, m_us_injection_buffer.push(req): state:"<<req->m_state<<" msg type:"<<req->m_msg_type
+                  <<" noc type:"<<req->m_noc_type);
           DEBUG("cycle:%-10lld node:%d [IP] req_id:%d src:%d dst:%d insert success\n",
               m_cycle, m_id, req->m_id, req->m_msg_src, req->m_msg_dst);
 
@@ -406,6 +411,7 @@ bool router_c::inject_packet(mem_req_s* req)
     else {
       if (m_injection_buffer->size() < m_injection_buffer_max_size) {
         m_injection_buffer->push_back(req);
+        report_req("Catch @router_c::inject_packet, action:m_injection_buffer->push_back(req).")
         return true;
       }
     }
@@ -1180,7 +1186,12 @@ mem_req_s* router_c::receive_req(int dir)
     if (m_req_buffer->empty())
       return NULL;
     else
-      return m_req_buffer->front();
+    {
+        mem_req_s* req;
+        req = m_req_buffer->front();
+        report_req("Catch @router_c::receive_req return m_req_buffer->front()");
+        return req;
+    }
   }
 }
 

@@ -61,6 +61,10 @@ cache_entry_c::cache_entry_c()
 {
 }
 
+//rht_entry_c::rht_entry_c()
+//    :m_valid(false), m_last_access_time(0)
+//{
+//}
 
 cache_set_c::cache_set_c(int assoc)
 {
@@ -68,11 +72,21 @@ cache_set_c::cache_set_c(int assoc)
   m_assoc = assoc;
 }
 
+//rht_entry_c::rht_set_c(int assoc)
+//{
+//    m_entry = new rht_entry_c[assoc];
+//    m_assoc = assoc;
+//}
+
 cache_set_c::~cache_set_c()
 {
   delete m_entry;
 }
 
+//rht_set_c::~rht_set_c()
+//{
+//    delete m_entry;
+//}
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -153,6 +167,65 @@ cache_c::cache_c(string name, int num_set, int assoc, int line_size,
   m_enable_partition = enable_partition;
 }
 
+//rht constructor
+//rht_c::rht_c(string name, int num_set, int assoc, int line_size,int data_size, 
+//     int bank_num, bool rht_turned_off, int core_id, Cache_Type cache_type_info,
+//    bool enable_partition, macsim_c* simBase) 
+//{
+//  m_simBase = simBase;
+//
+//  DEBUG("Initializing cache called '%s'.\n", name.c_str());
+//
+//  // Setting Basic Parameters sent via caller
+//  m_name        = name;
+//  m_data_size  = data_size;
+//  m_assoc      = assoc;
+//  m_num_sets   = num_set;
+//  m_line_size  = line_size;
+//  m_cache_type = cache_type_info; 
+//
+//  // Setting some fields to make indexing quick
+//  m_set_bits    = log2_int(num_set);
+//  m_shift_bits  = log2_int(line_size); /* use for shift amt. */
+//  m_set_mask    = N_BIT_MASK(log2_int(num_set)); /* use after shifting */
+//  m_tag_mask    = ~m_set_mask;  /* use after shifting */
+//  m_offset_mask = N_BIT_MASK(m_shift_bits); /* use before shifting */
+//  m_bank_num    = bank_num; 
+//
+//  // Allocating memory for all the sets (pointers to line arrays)
+//  m_core_id = core_id; 
+//
+//  // Allocating memory for all of the lines in each set
+//  m_set = new rht_set_c* [m_num_sets];  
+//
+//  for (int ii = 0; ii < m_num_sets; ++ii) {
+//    m_set[ii] = new rht_set_c(m_assoc); 
+//
+//    // Allocating memory for all of the data elements in each line
+//    for (int jj = 0; jj < assoc; ++jj) {
+//      m_set[ii]->m_entry[jj].m_valid          = false;
+//     // m_set[ii]->m_entry[jj].m_access_counter = false;
+//      if (data_size > 0) {
+//        m_set[ii]->m_entry[jj].m_data = (void *)malloc(data_size);
+//        memset(m_set[ii]->m_entry[jj].m_data, 0, data_size);
+//      } 
+//      else {
+//        m_set[ii]->m_entry[jj].m_data = INIT_CACHE_DATA_VALUE;
+//      }
+//      //m_set[ii]-> m_entry[jj].m_ib_tag        = 0;
+//      //m_set[ii]-> m_entry[jj].m_vb_tag        = 0;
+//    }
+//  }
+//
+//  // Initializing Last update count
+//  m_rht_turned_off = rht_turned_off;
+//
+//  m_num_cpu_line = 0;
+//  m_num_gpu_line = 0;
+//  m_insert_count = 0;
+//
+//  m_enable_partition = enable_partition;
+//}
 
 cache_c::~cache_c()
 {
@@ -237,6 +310,8 @@ void* cache_c::access_cache(Addr addr, Addr *line_addr, bool update_repl, int ap
 
   return NULL;
 }
+
+
 
 void cache_c::update_cache_on_access(Addr line_addr, int set, int appl_id)
 {
@@ -539,4 +614,59 @@ void cache_c::print_info(int id)
       ++m_insert_count % *m_simBase->m_knobs->KNOB_COLLECT_CACHE_INFO == 0) {
     cout << "CACHE::L" << id << " cpu: " << m_num_cpu_line << " gpu: " << m_num_gpu_line << "\n";
   }
+}
+
+vector<void*> rht_c::access_rht_set(Addr addr)
+{
+    int set;
+    Addr tag;
+
+    find_tag_and_set(addr, &tag, &set);
+
+    vector<void*> vec;
+    for(int ii=0;ii<m_assoc; ++ii)
+    {
+        cache_entry_c* line = &(m_set[set] -> m_entry[ii]);
+        if(line ->m_valid)
+        {
+            assert(line->m_data);
+            vec.push_back(line->m_data);
+        }
+        else
+        {
+
+        }
+    }
+    return vec;
+}
+
+void * rht_c::has_invalid_entry(Addr addr)
+{
+    int set;
+    Addr tag;
+
+    find_tag_and_set(addr, & tag, &set);
+
+    for(int ii=0;ii<m_assoc;ii++)
+    {
+        cache_entry_c* line = &(m_set[set] -> m_entry[ii]);
+        if(! line->m_valid)
+            return line ->m_data;
+    }
+    return NULL;
+}
+rht_c::~rht_c()
+{
+//    for(int ii=0;ii<m_num_sets;++ii)
+//    {
+//        for (int jj=0;jj<m_assoc;++jj)
+//        {
+//            if(m_data_size>0)
+//            {
+//                free(m_set[ii]->m_entry[jj].m_data);
+//            }
+//        }
+//        delete m_set[ii];
+//    }
+//    delete[] m_set;
 }

@@ -382,29 +382,8 @@ class cache_c
 class rht_c: public cache_c
 {
     public:
-        rht_c(string name, int num_set, int assoc, int line_size, int data_size, int bank_num,
-                bool cache_by_pass, int core_id, Cache_Type cache_type_info,bool enable_partition,
-                macsim_c* simBase):cache_c(name, num_set,assoc,line_size,data_size,bank_num,
-                    cache_by_pass,core_id, cache_type_info,false,1,2,simBase){
-                }
-                
-        ~rht_c();
-
-        
-
-        vector<void*> access_rht_set(Addr addr);
-
-        //void* access_rht_set_on_cache_miss(Addr addr);
-        
-        //void initialize_cache_line(cache_entry_c)
-        //bool record(Addr addr, cache_entry_c*);
-        
-        void* has_invalid_entry(Addr addr);
-
-        //bool bypass(Signature sig);
-        
-
-};
+        rht_c(string name)
+}
 
 #endif // CACHE_H
 

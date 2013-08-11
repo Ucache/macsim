@@ -1,0 +1,55 @@
+*** memory.h	2013-08-08 18:16:38.757734106 +0800
+--- /home/hero/bypassrelated/macsim/src/memory.h	2013-08-01 17:27:06.423531122 +0800
+***************
+*** 224,234 ****
+      bool done(mem_req_s* req);
+  
+      /**
+-      * Function for write ack
+-      */
+-     bool write_done(mem_req_s* req);
+- 
+-     /**
+       * Insert a request to in_queue (NEW REQ)
+       */
+      bool insert(mem_req_s* req);
+--- 224,229 ----
+***************
+*** 438,445 ****
+       * @param type - memory request type
+       * @param addr - memory request address
+       * @param size - memory request size
+-      * @param cache_hit - was request a hit in L1?
+-      * @param with_data - does request include data as well?
+       * @param delay - delay
+       * @param uop - request generating uop
+       * @param done_func - done function
+--- 433,438 ----
+***************
+*** 504,514 ****
+      void free_req(int core_id, mem_req_s* req);
+  
+      /**
+-      * Deallocate completed write request
+-      */
+-     void free_write_req(mem_req_s* req);
+- 
+-     /**
+       * Receive a message from NoC
+       */
+      bool receive(int src, int dst, int msg, mem_req_s* req);
+--- 497,502 ----
+***************
+*** 534,544 ****
+      bool done(mem_req_s* req);
+      
+      /**
+-      * Function for write ack
+-      */
+-     bool write_done(mem_req_s* req);
+-     
+-     /**
+       * Access L1 data cache
+       */
+      dcache_data_s* access_cache(int core_id, Addr addr, Addr *line_addr, bool update, 
+--- 522,527 ----

@@ -44,6 +44,7 @@ BANDWIDTH_TOT	statsEnums.h	/^BANDWIDTH_TOT,$/;"	e	enum:StatisticsEnum
 BANK	utils.h	80;"	d
 BAR_FETCH	uop.h	/^  BAR_FETCH     = 0x1,          \/\/!< causes fetch to halt until a redirect occurs$/;"	e	enum:Bar_Type_enum
 BAR_ISSUE	uop.h	/^  BAR_ISSUE     = 0x2,          \/\/!< causes issue to serialize around the instruction$/;"	e	enum:Bar_Type_enum
+BDCT	memory.h	/^        map<Signature, int> BDCT;$/;"	m	class:obm_c
 BIG_NUMBER	memory.cc	98;"	d	file:
 BITS_IN_BYTE	global_defs.h	203;"	d
 BITS_IN_LONGWORD	global_defs.h	205;"	d
@@ -101,6 +102,7 @@ CACHE_HIT	global_defs.h	183;"	d
 CACHE_IL1	cache.h	/^  CACHE_IL1 = 1,$/;"	e	enum:Cache_Type_enum
 CACHE_IL2	cache.h	/^  CACHE_IL2,$/;"	e	enum:Cache_Type_enum
 CACHE_MISS	global_defs.h	182;"	d
+CACHE_RHT	cache.h	/^  CACHE_RHT,$/;"	e	enum:Cache_Type_enum
 CACHE_SW_MANAGED	cache.h	/^  CACHE_SW_MANAGED,$/;"	e	enum:Cache_Type_enum
 CACHE_TEXTURE	cache.h	/^  CACHE_TEXTURE,$/;"	e	enum:Cache_Type_enum
 CF_BR	uop.h	/^  CF_BR,                        \/\/!< an unconditional branch$/;"	e	enum:Cf_Type_enum
@@ -209,7 +211,7 @@ DEBUG_MEM	cache.cc	53;"	d	file:
 DEBUG_MEM	pref_common.cc	73;"	d	file:
 DEBUG_MEM	pref_stride.cc	67;"	d	file:
 DEBUG_MEM	readonly_cache.cc	66;"	d	file:
-DEBUG_RANGE_COND	debug_macros.h	78;"	d
+DEBUG_RANGE_COND	debug_macros.h	89;"	d
 DEFUOP	exec.cc	94;"	d	file:
 DEFUOP	exec.cc	99;"	d	file:
 DEFUOP	schedule_smc.cc	77;"	d	file:
@@ -267,8 +269,8 @@ Dep_Type_enum	uop.h	/^typedef enum Dep_Type_enum {$/;"	g
 ENABLE	memory.cc	80;"	d	file:
 ENABLE_ASSERTIONS	assert_macros.h	52;"	d
 ENABLE_ASSERTIONS	assert_macros.h	54;"	d
-ENABLE_GLOBAL_DEBUG_PRINT	debug_macros.h	87;"	d
-ENABLE_GLOBAL_DEBUG_PRINT	debug_macros.h	89;"	d
+ENABLE_GLOBAL_DEBUG_PRINT	debug_macros.h	100;"	d
+ENABLE_GLOBAL_DEBUG_PRINT	debug_macros.h	98;"	d
 EXEC_CONFIG	config.h	188;"	d
 EXEC_H_INCLUDED	exec.h	40;"	d
 EXEC_INTERFACE_ARGS	exec.h	73;"	d
@@ -309,9 +311,9 @@ FRONTEND_MODE_IFETCH	frontend.h	/^  FRONTEND_MODE_IFETCH,         \/**< normal i
 FRONTEND_MODE_PERFECT	frontend.h	/^  FRONTEND_MODE_PERFECT,        \/**< prefetch icache *\/$/;"	e	enum:__anon1
 FRONTEND_MODE_WAIT_FOR_MISS	frontend.h	/^  FRONTEND_MODE_WAIT_FOR_MISS,  \/**< wait for instruction cache serviced *\/$/;"	e	enum:__anon1
 FRONTEND_MODE_WAIT_FOR_TIMER	frontend.h	/^  FRONTEND_MODE_WAIT_FOR_TIMER, \/**< not used *\/$/;"	e	enum:__anon1
-GET_APPL_ID	memory.cc	2459;"	d	file:
+GET_APPL_ID	memory.cc	2606;"	d	file:
 GLOBALS_H_INCLUDED	global_types.h	39;"	d
-GLOBAL_DEBUG_STREAM	debug_macros.h	92;"	d
+GLOBAL_DEBUG_STREAM	debug_macros.h	103;"	d
 GLOBAL_DEFS_INCLUDED	global_defs.h	39;"	d
 GPU_ABS	trace_read.h	/^  GPU_ABS,$/;"	e	enum:TR_OPCODE_ENUM_
 GPU_ABS64	trace_read.h	/^  GPU_ABS64,$/;"	e	enum:TR_OPCODE_ENUM_
@@ -472,7 +474,7 @@ ICACHE_MISS	statsEnums.h	/^ICACHE_MISS,$/;"	e	enum:StatisticsEnum
 ICACHE_MISS_TOTAL	statsEnums.h	/^ICACHE_MISS_TOTAL,$/;"	e	enum:StatisticsEnum
 IFETCH_WB_FIRST_SCHEDULE	statsEnums.h	/^IFETCH_WB_FIRST_SCHEDULE,$/;"	e	enum:StatisticsEnum
 INIT	router.cc	60;"	d	file:
-INIT_CACHE_DATA_VALUE	cache.h	62;"	d
+INIT_CACHE_DATA_VALUE	cache.h	63;"	d
 INST_COUNT	statsEnums.h	/^INST_COUNT,$/;"	e	enum:StatisticsEnum
 INST_COUNT_TOT	statsEnums.h	/^INST_COUNT_TOT,$/;"	e	enum:StatisticsEnum
 INST_INFO_H_INCLUDED	inst_info.h	39;"	d
@@ -1315,8 +1317,8 @@ Mem_To_UL1	pref_common.h	/^  Mem_To_UL1,$/;"	e	enum:HWP_Type_Enum
 Mem_Type	uop.h	/^} Mem_Type;$/;"	t	typeref:enum:Mem_Type_enum
 Mem_Type_enum	uop.h	/^typedef enum Mem_Type_enum {$/;"	g
 Mytid	macsim.h	/^		int Mytid; \/**< tid used by IRIS *\/$/;"	m	class:macsim_c
-NEW_MEMORY_CLASS	memory.h	561;"	d
-NEW_MEMORY_CLASS_ID	memory.h	568;"	d
+NEW_MEMORY_CLASS	memory.h	649;"	d
+NEW_MEMORY_CLASS_ID	memory.h	656;"	d
 NOC_ACK	memreq_info.h	/^  NOC_ACK,$/;"	e	enum:NOC_TYPE
 NOC_AVG_ACTIVE_PACKET	statsEnums.h	/^NOC_AVG_ACTIVE_PACKET,$/;"	e	enum:StatisticsEnum
 NOC_AVG_ACTIVE_PACKET_BASE	statsEnums.h	/^NOC_AVG_ACTIVE_PACKET_BASE,$/;"	e	enum:StatisticsEnum
@@ -1914,8 +1916,8 @@ READONLY_CACHE_H	readonly_cache.h	41;"	d
 REG_DATA_DEP	uop.h	/^  REG_DATA_DEP,$/;"	e	enum:Dep_Type_enum
 REMOVE_REDUNDANT_STREAM_STAT	statsEnums.h	/^REMOVE_REDUNDANT_STREAM_STAT,$/;"	e	enum:StatisticsEnum
 REPLACE_OLD_STREAM	statsEnums.h	/^REPLACE_OLD_STREAM,$/;"	e	enum:StatisticsEnum
-REPORT	debug_macros.h	62;"	d
-REPORT	debug_macros.h	71;"	d
+REPORT	debug_macros.h	73;"	d
+REPORT	debug_macros.h	82;"	d
 REP_MOV_MEM_SIZE_MAX	trace_read.h	52;"	d
 REP_MOV_MEM_SIZE_MAX_NEW	trace_read.h	53;"	d
 REQ_SEND_QUEUE_STALL	statsEnums.h	/^REQ_SEND_QUEUE_STALL,$/;"	e	enum:StatisticsEnum
@@ -2005,6 +2007,7 @@ ST_SM_WT	trace_read.h	/^  ST_SM_WT,$/;"	e	enum:TR_OPCODE_ENUM_
 SW_MANAGED_CACHE_H	sw_managed_cache.h	40;"	d
 S_STATE	memory.h	/^  S_STATE,$/;"	e	enum:COHERENCE_STATE
 Section_Type_enum	process_manager.h	/^enum Section_Type_enum$/;"	g
+Signature	global_types.h	/^typedef uns64 Signature;$/;"	t
 StatisticsEnum	statsEnums.h	/^enum StatisticsEnum$/;"	g
 StatisticsEnumEnd	statsEnums.h	/^	StatisticsEnumEnd$/;"	e	enum:StatisticsEnum
 StatsEnums_Included	statsEnums.h	2;"	d
@@ -2411,14 +2414,15 @@ XED_CATEGORY_X87_ALU	trace_read.h	/^  XED_CATEGORY_X87_ALU,$/;"	e	enum:TR_OPCODE
 XED_CATEGORY_XSAVE	trace_read.h	/^  XED_CATEGORY_XSAVE,$/;"	e	enum:TR_OPCODE_ENUM_
 XED_CATEGORY_XSAVEOPT	trace_read.h	/^  XED_CATEGORY_XSAVEOPT,$/;"	e	enum:TR_OPCODE_ENUM_
 _ALL_STATS_C_INCLUDED_	all_stats.h	2;"	d
-_DEBUG	debug_macros.h	100;"	d
 _DEBUG	debug_macros.h	111;"	d
+_DEBUG	debug_macros.h	122;"	d
 _DEBUG_IRIS	memreq_info.h	53;"	d
 _Unit_Type_enum	global_types.h	/^typedef enum _Unit_Type_enum$/;"	g
 __ALL_KNOBS_H_INCLUDED__	all_knobs.h	2;"	d
 __ASSERT_H__	assert_macros.h	42;"	d
-__DEBUG_MACROS_H__	debug_macros.h	115;"	d
+__DEBUG_MACROS_H__	debug_macros.h	126;"	d
 __PREF_STRIDE_H__	pref_stride.h	39;"	d
+__init__	keep_plus_section_in_patch.py	/^    def __init__(self,filename):$/;"	m	class:keep_patch
 abstract_knob_c	knob.h	/^    abstract_knob_c() {  }$/;"	f	class:abstract_knob_c
 abstract_knob_c	knob.h	/^    abstract_knob_c(string name, string value, string parentName): m_name(name),$/;"	f	class:abstract_knob_c
 abstract_knob_c	knob.h	/^class abstract_knob_c$/;"	c
@@ -2428,6 +2432,9 @@ access_cache	cache.cc	/^void* cache_c::access_cache(Addr addr, Addr *line_addr, 
 access_cache	memory.cc	/^dcache_data_s* dcu_c::access_cache(Addr addr, Addr *line_addr, bool update, int appl_id)$/;"	f	class:dcu_c
 access_cache	memory.cc	/^dcache_data_s* memory_c::access_cache(int core_id, Addr addr, Addr *line_addr, \\$/;"	f	class:memory_c
 access_icache	frontend.cc	/^bool frontend_c::access_icache(int tid, Addr fetch_addr, frontend_s* fetch_data)$/;"	f	class:frontend_c
+access_rht	memory.cc	/^bool obm_c::access_rht(Addr addr,Signature sig, Addr *line_addr)$/;"	f	class:obm_c
+access_rht_on_cache_miss	memory.cc	/^bool obm_c::access_rht_on_cache_miss(Addr addr, Signature sig, Addr *line_addr)$/;"	f	class:obm_c
+access_rht_set	cache.cc	/^vector<void*> rht_c::access_rht_set(Addr addr)$/;"	f	class:rht_c
 acquire_data_bus	dram.cc	/^Counter dram_controller_c::acquire_data_bus(int channel_id, int req_size, bool gpu_req)$/;"	f	class:dram_controller_c
 acquire_entry	utils.h	/^    T* acquire_entry(macsim_c* m_simBase) $/;"	f	class:pool_c
 acquire_entry	utils.h	/^    T* acquire_entry(void)$/;"	f	class:pool_c
@@ -2471,11 +2478,13 @@ avg_power	macsim.h	/^		double avg_power; \/**< average power *\/$/;"	m	class:mac
 back	rob.h	/^    uop_c* back() $/;"	f	class:rob_c
 bank_id	memory.cc	/^int dcu_c::bank_id(Addr addr)$/;"	f	class:dcu_c
 bank_id	memory.cc	/^int memory_c::bank_id(int core_id, Addr addr)$/;"	f	class:memory_c
+bank_id	memory.cc	/^int obm_c::bank_id(Addr addr)$/;"	f	class:obm_c
 bank_schedule	dram.cc	/^void dram_controller_c::bank_schedule()$/;"	f	class:dram_controller_c
 bank_schedule_complete	dram.cc	/^void dram_controller_c::bank_schedule_complete(void)$/;"	f	class:dram_controller_c
 bank_schedule_new	dram.cc	/^void dram_controller_c::bank_schedule_new(void)$/;"	f	class:dram_controller_c
 base_addr	memory.cc	/^Addr dcu_c::base_addr(Addr addr)$/;"	f	class:dcu_c
 base_addr	memory.cc	/^Addr memory_c::base_addr(int core_id, Addr addr)$/;"	f	class:memory_c
+base_addr	memory.cc	/^Addr obm_c::base_addr(Addr addr)$/;"	f	class:obm_c
 base_cache_line	cache.cc	/^Addr cache_c::base_cache_line(Addr addr) $/;"	f	class:cache_c
 base_cache_line	readonly_cache.cc	/^Addr readonly_cache_c::base_cache_line(Addr addr)$/;"	f	class:readonly_cache_c
 base_cache_line	sw_managed_cache.cc	/^Addr sw_managed_cache_c::base_cache_line(Addr addr)$/;"	f	class:sw_managed_cache_c
@@ -2499,6 +2508,7 @@ btb	bp_targ.h	/^     cache_c* btb; \/**< BTB *\/$/;"	m	class:bp_targ_c
 btb_access	frontend.cc	/^bool frontend_c::btb_access(uop_c *uop)$/;"	f	class:frontend_c
 bug_detector_c	bug_detector.cc	/^bug_detector_c::bug_detector_c(macsim_c* simBase)$/;"	f	class:bug_detector_c
 bug_detector_c	bug_detector.h	/^class bug_detector_c $/;"	c
+bypass	memory.cc	/^bool obm_c::bypass(Signature sig)$/;"	f	class:obm_c
 cache_c	cache.cc	/^cache_c::cache_c(string name, int num_set, int assoc, int line_size, $/;"	f	class:cache_c
 cache_c	cache.h	/^class cache_c $/;"	c
 cache_entry_c	cache.cc	/^cache_entry_c::cache_entry_c()$/;"	f	class:cache_entry_c
@@ -2541,6 +2551,7 @@ convert_dyn_uop	trace_read.cc	/^void trace_read_c::convert_dyn_uop(inst_info_s *
 convert_info_uop	trace_read.cc	/^void trace_read_c::convert_info_uop(inst_info_s *info, trace_uop_s *trace_uop)$/;"	f	class:trace_read_c
 convert_pinuop_to_t_uop	trace_read.cc	/^inst_info_s* trace_read_c::convert_pinuop_to_t_uop(trace_info_s *pi, trace_uop_s **trace_uop, $/;"	f	class:trace_read_c
 convert_t_uop_to_info	trace_read.cc	/^void trace_read_c::convert_t_uop_to_info(trace_uop_s *t_uop, inst_info_s *info)$/;"	f	class:trace_read_c
+copy	keep_plus_section_in_patch.py	/^    def copy(self,start,end):$/;"	m	class:keep_patch
 core	statistics.h	/^    inline CoreStatistics& core(unsigned int coreID) const$/;"	f	class:ProcessorStatistics
 core_c	core.cc	/^core_c::core_c (int c_id, macsim_c* simBase, Unit_Type type)$/;"	f	class:core_c
 core_c	core.h	/^class core_c$/;"	c
@@ -2607,6 +2618,7 @@ done_func	pref_stride.h	/^    void done_func() {}$/;"	f	class:pref_stride_c
 dprint_count	trace_read.h	/^    uint32_t  dprint_count; \/**< dumped instruction count *\/$/;"	m	class:trace_read_c
 dprint_inst	trace_read.cc	/^void trace_read_c::dprint_inst(trace_info_s *t_info, int core_id, int thread_id) $/;"	f	class:trace_read_c
 dprint_output	trace_read.h	/^    ofstream* dprint_output; \/**< dump output file stream *\/$/;"	m	class:trace_read_c
+dprintf	debug_macros.h	65;"	d
 dram_controller_c	dram.cc	/^dram_controller_c::dram_controller_c(macsim_c* simBase)$/;"	f	class:dram_controller_c
 dram_controller_c	dram.h	/^class dram_controller_c$/;"	c
 dram_req_priority	dram.cc	/^int dram_controller_c::dram_req_priority[DRAM_REQ_PRIORITY_COUNT] = $/;"	m	class:dram_controller_c	file:
@@ -2743,6 +2755,7 @@ get_psel_mask	utils.h	/^    inline bool get_psel_mask(int appl_id)$/;"	f	class:c
 get_psel_mask	utils.h	/^    inline bool get_psel_mask(void)$/;"	f	class:cache_partition_framework_c
 get_read_port	memory.cc	/^bool dcu_c::get_read_port(int bank_id)$/;"	f	class:dcu_c
 get_read_port	memory.cc	/^bool memory_c::get_read_port(int core_id, int bank_id)$/;"	f	class:memory_c
+get_read_port	memory.cc	/^int  obm_c::get_read_port(int bank_id)$/;"	f	class:obm_c
 get_read_port	port.cc	/^bool port_c::get_read_port (Counter cycle_count)$/;"	f	class:port_c
 get_retire	core.h	/^    retire_c* get_retire(void) { return m_retire; }$/;"	f	class:core_c
 get_shared_memory	core.h	/^    sw_managed_cache_c* get_shared_memory(void) { return m_shared_memory; }$/;"	f	class:core_c
@@ -2764,6 +2777,7 @@ gpu_allocq_entry_s	allocate_smc.h	/^typedef struct gpu_allocq_entry_s$/;"	s
 gpu_allocq_entry_s	allocate_smc.h	/^} gpu_allocq_entry_s;$/;"	t	typeref:struct:gpu_allocq_entry_s
 gpu_allocq_entry_s	global_defs.h	/^typedef struct gpu_allocq_entry_s gpu_allocq_entry_s; $/;"	t	typeref:struct:gpu_allocq_entry_s
 handle_coherence	memory.cc	/^void memory_c::handle_coherence(int level, bool hit, bool store, Addr addr, dcu_c* cache)$/;"	f	class:memory_c
+has_invalid_entry	cache.cc	/^void * rht_c::has_invalid_entry(Addr addr)$/;"	f	class:rht_c
 hash_c	utils.h	/^    hash_c() $/;"	f	class:hash_c
 hash_c	utils.h	/^    hash_c(pool_c<T>* pool)$/;"	f	class:hash_c
 hash_c	utils.h	/^    hash_c(string name)$/;"	f	class:hash_c
@@ -2798,6 +2812,7 @@ init	dram.cc	/^void dram_controller_c::init(int id, int noc_id)$/;"	f	class:dram
 init	frontend.cc	/^void frontend_s::init()$/;"	f	class:frontend_s
 init	memory.cc	/^void dcu_c::init(int next_id, int prev_id, bool done, bool coupled_up, bool coupled_down, \\$/;"	f	class:dcu_c
 init	memory.cc	/^void memory_c::init(void)$/;"	f	class:memory_c
+init	memory.cc	/^void obm_c::init(bool done, bool disable)$/;"	f	class:obm_c
 init	pref.h	/^    bool init;                  \/**< Enable init function *\/$/;"	m	class:pref_base_c
 init	router.cc	/^void flit_c::init(void)$/;"	f	class:flit_c
 init	router.cc	/^void router_c::init(int total_router, int* total_packet, pool_c<flit_c>* flit_pool, pool_c<credit_c>* credit_pool)$/;"	f	class:router_c
@@ -2859,6 +2874,7 @@ is_running	retire.cc	/^bool retire_c::is_running()$/;"	f	class:retire_c
 is_running	schedule.cc	/^bool schedule_c::is_running()$/;"	f	class:schedule_c
 is_sfu_inst	schedule_smc.cc	/^bool schedule_smc_c::is_sfu_inst(uop_c *uop) {$/;"	f	class:schedule_smc_c
 k_trace_buffer_size	trace_read.h	/^    static const int k_trace_buffer_size = 1000; \/**< maximum buffer size *\/$/;"	m	class:trace_read_c
+keep_patch	keep_plus_section_in_patch.py	/^class keep_patch:$/;"	c
 knob_enable	pref.h	/^    bool          knob_enable;  \/**< enable prefetcher *\/$/;"	m	class:pref_base_c
 knob_num_threads	schedule_smc.h	/^    int knob_num_threads; \/**< number of maximum thread per core *\/$/;"	m	class:schedule_smc_c
 knob_ptx_sim	pref_common.h	/^    bool knob_ptx_sim; \/**< GPU simulation *\/$/;"	m	class:hwp_common_c
@@ -2903,6 +2919,7 @@ line_addr	pref_common.h	/^  Addr line_addr;               \/**< line address *\/
 line_index	pref_common.h	/^  Addr line_index;              \/**< line index *\/$/;"	m	struct:pref_mem_req_s
 line_size	memory.cc	/^int dcu_c::line_size()$/;"	f	class:dcu_c
 line_size	memory.cc	/^int memory_c::line_size(int core_id)$/;"	f	class:memory_c
+line_size	memory.cc	/^int obm_c:: line_size()$/;"	f	class:obm_c
 load	readonly_cache.cc	/^int readonly_cache_c::load(uop_c *uop)$/;"	f	class:readonly_cache_c
 load	sw_managed_cache.cc	/^int sw_managed_cache_c::load(uop_c *uop)$/;"	f	class:sw_managed_cache_c
 loadPC	pref_common.h	/^  Addr loadPC;                  \/**< load pc *\/$/;"	m	struct:pref_mem_req_s
@@ -3699,12 +3716,14 @@ m_applications	process_manager.h	/^  vector<string>       m_applications; \/**< 
 m_arbitration_policy	router.h	/^    int m_arbitration_policy; \/**< arbitration policy *\/$/;"	m	class:router_c
 m_assoc	cache.h	/^    int     m_assoc;             \/**< associativity *\/                $/;"	m	class:cache_c
 m_assoc	cache.h	/^    int m_assoc; \/**< associativity *\/$/;"	m	class:cache_set_c
+m_assoc	memory.h	/^        int         m_assoc;$/;"	m	class:obm_c
 m_assoc	memory.h	/^    int       m_assoc; \/**< cache associativity *\/$/;"	m	class:dcu_c
 m_bCoreWide	statistics.h	/^    bool m_bCoreWide; \/**< when set, add suffix to the name of a stat *\/$/;"	m	class:AbstractStat
 m_bank_busy	exec.h	/^    bool*    m_bank_busy; \/**< indicate dcache bank busy *\/$/;"	m	class:exec_c
 m_bank_num	cache.h	/^    int     m_bank_num;          \/**< number of banks *\/             $/;"	m	class:cache_c
 m_bank_ready	dram.h	/^    Counter* m_bank_ready; \/**< bank ready cycle *\/$/;"	m	class:dram_controller_c
 m_bank_timestamp	dram.h	/^    Counter* m_bank_timestamp; \/**< last touched cycle of a bank *\/$/;"	m	class:dram_controller_c
+m_banks	memory.h	/^        int         m_banks;$/;"	m	class:obm_c
 m_banks	memory.h	/^    int       m_banks; \/**< number of cache banks *\/$/;"	m	class:dcu_c
 m_bar_sections	process_manager.h	/^  list<section_info_s*> m_bar_sections; \/**< barrier sections *\/$/;"	m	struct:thread_s
 m_bar_type	inst_info.h	/^  Bar_Type    m_bar_type; \/\/!< type of barrier caused by instruction$/;"	m	struct:table_info_s
@@ -3753,6 +3772,7 @@ m_buffer_index_max	process_manager.h	/^  int                  m_buffer_index_max
 m_buffer_max_size	router.h	/^    int m_buffer_max_size; \/**< input\/output buffer max size *\/$/;"	m	class:router_c
 m_bug_detector	macsim.h	/^		bug_detector_c *m_bug_detector; \/**< bug detector *\/$/;"	m	class:macsim_c
 m_bus_width	dram.h	/^    int m_bus_width; \/**< dram data bus width *\/$/;"	m	class:dram_controller_c
+m_bypass	memory.h	/^        bool        m_bypass;$/;"	m	class:obm_c
 m_bypass	memory.h	/^    bool      m_bypass; \/**< bypass cache *\/$/;"	m	class:dcu_c
 m_bypass	memreq_info.h	/^  int           m_bypass;       \/**< bypass last level cache *\/$/;"	m	struct:mem_req_s
 m_bypass_llc	uop.h	/^    bool              m_bypass_llc; \/**< bypass last level cache *\/$/;"	m	class:uop_c
@@ -3801,6 +3821,7 @@ m_core_id	bp_targ.h	/^     uns m_core_id; \/**< Core id *\/$/;"	m	class:bp_targ_
 m_core_id	cache.h	/^    int     m_core_id;           \/**< core id *\/$/;"	m	class:cache_c
 m_core_id	core.h	/^    int                      m_core_id; \/**< core id *\/$/;"	m	class:core_c
 m_core_id	dram.h	/^  int         m_core_id;        \/**< core id *\/$/;"	m	struct:drb_entry_s
+m_core_id	memory.h	/^  int       m_core_id;            \/**< core id *\/$/;"	m	struct:rht_data_s
 m_core_id	memory.h	/^  int     m_core_id;            \/**< core id *\/$/;"	m	struct:dcache_data_s
 m_core_id	memreq_info.h	/^  int           m_core_id;      \/**< core id *\/$/;"	m	struct:mem_req_s
 m_core_id	memreq_info.h	/^  int     m_core_id;            \/**< core id *\/$/;"	m	struct:pref_req_info_s
@@ -3844,6 +3865,7 @@ m_current_rid	dram.h	/^    int* m_current_rid; \/**< Current open row id *\/$/;"
 m_current_vector_index	process_manager.h	/^  unsigned int         m_current_vector_index; \/**< current index to the sub-application *\/$/;"	m	struct:process_s
 m_cycle	core.h	/^    Counter m_cycle; \/**< clock cycle *\/$/;"	m	class:core_c
 m_cycle	dram.h	/^    Counter m_cycle; \/**< dram clock cycle *\/$/;"	m	class:dram_controller_c
+m_cycle	memory.h	/^        Counter m_cycle;$/;"	m	class:obm_c
 m_cycle	memory.h	/^    Counter m_cycle; \/**< clock cycle *\/$/;"	m	class:dcu_c
 m_cycle	memory.h	/^    Counter m_cycle; \/**< clock cycle *\/$/;"	m	class:memory_c
 m_cycle	router.h	/^    Counter m_cycle; \/**< clock cycle *\/$/;"	m	class:router_wrapper_c
@@ -3867,8 +3889,10 @@ m_dests	trace_read.h	/^  reg_info_s   m_dests[MAX_DESTS]; \/**< destination regi
 m_dir	router.h	/^    int        m_dir; \/**< direction *\/$/;"	m	class:flit_c
 m_dir	uop.h	/^    uns8              m_dir; \/**< branch direction *\/$/;"	m	class:uop_c
 m_dirty	cache.h	/^    bool          m_dirty;        \/\/!< data is dirty $/;"	m	class:cache_entry_c
+m_dirty	memory.h	/^  bool      m_dirty;              \/**< line dirty *\/$/;"	m	struct:rht_data_s
 m_dirty	memory.h	/^  bool    m_dirty;              \/**< line dirty *\/$/;"	m	struct:dcache_data_s
 m_dirty	memreq_info.h	/^  bool          m_dirty;        \/**< wb request? *\/$/;"	m	struct:mem_req_s
+m_disable	memory.h	/^        bool        m_disable;$/;"	m	class:obm_c
 m_disable	memory.h	/^    bool      m_disable; \/**< disabled *\/$/;"	m	class:dcu_c
 m_dispatch_busy_cycle	schedule_smc.h	/^    Counter *m_dispatch_busy_cycle; \/**<model the variable throughputs of different instructions *\/$/;"	m	class:schedule_smc_c
 m_dispatch_done	process_manager.h	/^  int     m_dispatch_done;      \/**< dispatch done *\/$/;"	m	struct:block_schedule_info_s
@@ -3878,12 +3902,13 @@ m_dispatched_thread_num	process_manager.h	/^  int     m_dispatched_thread_num; \
 m_distributionMembers	statistics.h	/^  vector<long>  m_distributionMembers; \/**< stat table *\/$/;"	m	class:DIST_Stat
 m_distributions	statistics.h	/^    vector<DIST_Stat*> m_distributions; \/**< distribution stats *\/$/;"	m	class:CoreStatistics
 m_distributions	statistics.h	/^    vector<DIST_Stat*> m_distributions; \/**< distribution stats *\/$/;"	m	class:GlobalStatistics
+m_done	memory.h	/^        bool        m_done;$/;"	m	class:obm_c
 m_done	memory.h	/^    bool      m_done; \/**< done_func can be called *\/$/;"	m	class:dcu_c
 m_done	memreq_info.h	/^  bool          m_done;         \/**< request done flag *\/$/;"	m	struct:mem_req_s
 m_done_cycle	uop.h	/^    Counter           m_done_cycle; \/**< done cycle *\/$/;"	m	class:uop_c
 m_done_func	memreq_info.h	/^  function<bool (mem_req_s*)> m_done_func; \/**< done function *\/$/;"	m	struct:mem_req_s
 m_dram_controller	macsim.h	/^    dram_controller_c** m_dram_controller; \/**< dram controller *\/$/;"	m	class:macsim_c
-m_dram_interleave_factor	memory.h	/^    int m_dram_interleave_factor; \/**< mask bit for dram id *\/$/;"	m	class:memory_c
+m_dram_interleave_factor	memory.h	/^    int m_dram_interleave_factor;$/;"	m	class:memory_c
 m_ds_injection_buffer	router.h	/^    queue<mem_req_s *> m_ds_injection_buffer;$/;"	m	class:router_c
 m_ds_injection_buffer_max_size	router.h	/^    int m_ds_injection_buffer_max_size;$/;"	m	class:router_c
 m_ds_start	router.h	/^    int m_ds_start;$/;"	m	class:router_c
@@ -3915,6 +3940,7 @@ m_fe_stall	frontend.h	/^    bool          m_fe_stall; \/**< frontend stalled *\/
 m_fetch_addr	frontend.h	/^  Addr m_fetch_addr; \/**< current fetch address *\/ $/;"	m	struct:mt_scheduler_s
 m_fetch_arbiter	frontend.h	/^    int           m_fetch_arbiter; \/**< fetch arbiter *\/$/;"	m	class:frontend_c
 m_fetch_blocked	frontend.h	/^  bool               m_fetch_blocked; \/**< fetch blocked *\/$/;"	m	struct:frontend_s
+m_fetch_cycle	memory.h	/^  Counter   m_fetch_cycle;        \/**< fetched cycle *\/$/;"	m	struct:rht_data_s
 m_fetch_cycle	memory.h	/^  Counter m_fetch_cycle;        \/**< fetched cycle *\/$/;"	m	struct:dcache_data_s
 m_fetch_data	process_manager.h	/^  frontend_s*          m_fetch_data; \/**< frontend fetch data *\/ $/;"	m	struct:thread_s
 m_fetch_ended	core.h	/^    unordered_map<int, bool> m_fetch_ended; \/**< fetch ended *\/$/;"	m	class:core_c
@@ -3974,12 +4000,15 @@ m_heartbeat_last_time_core	core.h	/^    time_t  m_heartbeat_last_time_core; \/**
 m_heartbeat_pool	macsim.h	/^		pool_c<heartbeat_s>* m_heartbeat_pool; \/**<  heartbeat data pool *\/$/;"	m	class:macsim_c
 m_heartbeat_printed_inst_count_core	core.h	/^    Counter m_heartbeat_printed_inst_count_core; \/**< last printed heartbeat inst. count *\/$/;"	m	class:core_c
 m_hw_pref	core.h	/^    hwp_common_c                   *m_hw_pref; \/**< hardware prefetcher *\/$/;"	m	class:core_c
+m_ib_signature	memory.h	/^  Signature m_ib_signature;$/;"	m	struct:rht_data_s
+m_ib_tag	memory.h	/^  Addr      m_ib_tag;$/;"	m	struct:rht_data_s
 m_ibp_miss	uop.h	/^    bool  m_ibp_miss;           \/**< indirect branch miss *\/$/;"	m	class:uop_info_c
 m_icache	core.h	/^    cache_c*                        m_icache; \/**< instruction cache *\/$/;"	m	class:core_c
 m_icmiss	uop.h	/^    bool  m_icmiss;             \/**< instruction cache miss *\/$/;"	m	class:uop_info_c
 m_id	dram.h	/^    int m_id; \/**< dram controller id *\/$/;"	m	class:dram_controller_c
 m_id	dram.h	/^  int         m_id;             \/**< drb entry id *\/$/;"	m	struct:drb_entry_s
 m_id	inst_info.h	/^  uns16    m_id;                 \/\/!< flattened register number (unique across sets)$/;"	m	struct:reg_info_s
+m_id	memory.h	/^        int         m_id;$/;"	m	class:obm_c
 m_id	memory.h	/^    int       m_id; \/**< cache id *\/$/;"	m	class:dcu_c
 m_id	memreq_info.h	/^  int           m_id;           \/**< unique request id *\/                         $/;"	m	struct:mem_req_s
 m_id	router.h	/^    int        m_id; \/**< flit id *\/$/;"	m	class:flit_c
@@ -4071,6 +4100,7 @@ m_last_uop	uop.h	/^    bool              m_last_uop; \/**< last uop of a thread 
 m_last_update_time	pref_common.h	/^    Counter m_last_update_time; \/**< when did we update the default prefetcher last? *\/$/;"	m	class:hwp_common_c
 m_latency	exec.cc	/^  int m_latency; \/**< latency *\/$/;"	m	struct:Uop_LatencyBinding_Init	file:
 m_latency	exec.h	/^    int     m_latency[NUM_UOP_TYPES]; \/**< latency map *\/$/;"	m	class:exec_c
+m_latency	memory.h	/^        int         m_latency;$/;"	m	class:obm_c
 m_latency	memory.h	/^    int       m_latency; \/**< cache access latency *\/$/;"	m	class:dcu_c
 m_latency	schedule_smc.cc	/^  int m_latency;$/;"	m	struct:Uop_Dispatch_Latency	file:
 m_latency_count	bug_detector.h	/^    uint64_t *m_latency_count; \/**< total uop count *\/$/;"	m	class:bug_detector_c
@@ -4079,6 +4109,7 @@ m_ld_vaddr1	trace_read.h	/^  uint32_t m_ld_vaddr1;         \/**< load address 1 
 m_ld_vaddr2	trace_read.h	/^  uint32_t m_ld_vaddr2;         \/**< load address 2 *\/$/;"	m	struct:trace_info_s
 m_level	memory.h	/^    int       m_level; \/**< cache level (L1, L2, L3, or memory controller) *\/$/;"	m	class:dcu_c
 m_line_size	cache.h	/^    int     m_line_size;         \/**< cache line size *\/            $/;"	m	class:cache_c
+m_line_size	memory.h	/^        int         m_line_size;$/;"	m	class:obm_c
 m_line_size	memory.h	/^    int       m_line_size; \/**< cache line size *\/$/;"	m	class:dcu_c
 m_link	router.h	/^    router_c* m_link[5]; \/**< links *\/$/;"	m	class:router_c
 m_link_avail	router.h	/^    Counter* m_link_avail; \/**< link availability *\/$/;"	m	class:router_c
@@ -4110,7 +4141,7 @@ m_mem_bar_sections	process_manager.h	/^  list<section_info_s*> m_mem_bar_section
 m_mem_for_bar_sections	process_manager.h	/^  list<section_info_s*> m_mem_for_bar_sections; \/**< memory for barrier sections *\/$/;"	m	struct:thread_s
 m_mem_map_entry_pool	macsim.h	/^		pool_c<mem_map_entry_c>* m_mem_map_entry_pool; \/**<  memory dependence data pool *\/$/;"	m	class:macsim_c
 m_mem_read_size	trace_read.h	/^  uint8_t  m_mem_read_size;     \/**< memory read size *\/$/;"	m	struct:trace_info_s
-m_mem_req_pool	memory.h	/^    pool_c<mem_req_s> *m_mem_req_pool; \/**< pool for write requests in ptx simulations *\/$/;"	m	class:memory_c
+m_mem_req_pool	memory.h	/^    pool_c<mem_req_s> *m_mem_req_pool;$/;"	m	class:memory_c
 m_mem_sched_rate	exec.h	/^    uns16   m_mem_sched_rate; \/**< memory schedule rate *\/$/;"	m	class:exec_c
 m_mem_sections	process_manager.h	/^  list<section_info_s*> m_mem_sections; \/**< memory sections *\/$/;"	m	struct:thread_s
 m_mem_size	inst_info.h	/^  int         m_mem_size; \/\/!< number of bytes read\/written by a memory instruction$/;"	m	struct:table_info_s
@@ -4123,6 +4154,7 @@ m_mem_type	trace_read.h	/^  Mem_Type     m_mem_type;      \/**< type of memory i
 m_mem_type	uop.h	/^    Mem_Type          m_mem_type; \/**< memory type *\/$/;"	m	class:uop_c
 m_mem_write_size	trace_read.h	/^  uint8_t  m_mem_write_size;    \/**< memory write size *\/$/;"	m	struct:trace_info_s
 m_memory	macsim.h	/^		memory_c* m_memory; \/**< main memory *\/$/;"	m	class:macsim_c
+m_memory	memory.h	/^        memory_c*   m_memory;$/;"	m	class:obm_c
 m_memory	memory.h	/^    memory_c* m_memory; \/**< pointer to the memory system *\/$/;"	m	class:dcu_c
 m_memory	noc.h	/^    memory_c* m_memory; \/**< pointer to the memory class *\/$/;"	m	class:noc_c
 m_merge	memreq_info.h	/^  list<mem_req_s*> m_merge; \/**< merged request list *\/$/;"	m	struct:mem_req_s
@@ -4203,6 +4235,7 @@ m_num_per_sched	schedule.h	/^    int*            m_num_per_sched; \/**< number o
 m_num_port	router.h	/^    int m_num_port; \/**< number of ports *\/$/;"	m	class:router_c
 m_num_queues	allocate.h	/^    int             m_num_queues; \/**< number of allocation queue types *\/$/;"	m	class:allocate_c
 m_num_queues	allocate_smc.h	/^    int                            m_num_queues; \/**< number of allocation queue types *\/$/;"	m	class:smc_allocate_c
+m_num_read_port	memory.h	/^        int         m_num_read_port;$/;"	m	class:obm_c
 m_num_read_port	memory.h	/^    int       m_num_read_port; \/**< number of read ports *\/$/;"	m	class:dcu_c
 m_num_read_ports	port.h	/^    uns     m_num_read_ports; \/**< number of total read ports *\/$/;"	m	class:port_c
 m_num_read_regs	trace_read.h	/^  uint8_t  m_num_read_regs;     \/**< num read registers *\/$/;"	m	struct:trace_info_s
@@ -4210,6 +4243,7 @@ m_num_router	router.h	/^    int m_num_router; \/**< number of routers *\/$/;"	m	
 m_num_running_core	macsim.h	/^		int m_num_running_core; \/**< set to any non0 number before simulation start *\/$/;"	m	class:macsim_c
 m_num_sb	rob.h	/^    int       m_num_sb; \/**< number of available store buffer *\/$/;"	m	class:rob_c
 m_num_sending_uop	process_manager.h	/^  int                  m_num_sending_uop; \/**< number of sending uops *\/$/;"	m	struct:thread_s
+m_num_set	memory.h	/^        int         m_num_set;$/;"	m	class:obm_c
 m_num_set	memory.h	/^    int       m_num_set; \/**< number of cache sets *\/$/;"	m	class:dcu_c
 m_num_sets	cache.h	/^    int     m_num_sets;          \/**< number of sets *\/             $/;"	m	class:cache_c
 m_num_src_regs	inst_info.h	/^  int         m_num_src_regs; \/\/!< number of source registers read$/;"	m	struct:table_info_s
@@ -4223,6 +4257,7 @@ m_num_uselesspref_evict	pref_common.h	/^    Counter m_num_uselesspref_evict; \/*
 m_num_vc	router.h	/^    int m_num_vc; \/**< number of virtual channels *\/$/;"	m	class:router_c
 m_num_vc_cpu	router.h	/^    int m_num_vc_cpu; \/**< number of vcs for CPU *\/$/;"	m	class:router_c
 m_num_waiting_dispatched_threads	macsim.h	/^		int m_num_waiting_dispatched_threads; \/**< number of threads waiting for begin dispatched *\/$/;"	m	class:macsim_c
+m_num_write_port	memory.h	/^        int         m_num_write_port;$/;"	m	class:obm_c
 m_num_write_port	memory.h	/^    int       m_num_write_port; \/**< number of write ports *\/$/;"	m	class:dcu_c
 m_num_write_ports	port.h	/^    uns     m_num_write_ports; \/**< number of total write ports *\/$/;"	m	class:port_c
 m_off_path	uop.h	/^    bool              m_off_path; \/**< uop in wrong-path *\/$/;"	m	class:uop_c
@@ -4261,6 +4296,7 @@ m_parentDistroID	statistics.h	/^  long m_parentDistroID; \/**< parent distributi
 m_parentName	knob.h	/^    string m_parentName; \/**< parent knob name *\/$/;"	m	class:abstract_knob_c
 m_parent_uop	uop.h	/^    uop_c            *m_parent_uop; \/**< parent uop *\/$/;"	m	class:uop_c
 m_pc	map.h	/^    Addr     m_pc;              \/**< pc address *\/$/;"	m	class:map_entry_c
+m_pc	memory.h	/^  Addr      m_pc;                 \/**< pc address *\/$/;"	m	struct:rht_data_s
 m_pc	memory.h	/^  Addr    m_pc;                 \/**< pc address *\/$/;"	m	struct:dcache_data_s
 m_pc	memreq_info.h	/^  Addr          m_pc;           \/**< load pc *\/$/;"	m	struct:mem_req_s
 m_pc	uop.h	/^    Addr              m_pc; \/**< pc address *\/$/;"	m	class:uop_c
@@ -4283,6 +4319,7 @@ m_pool	utils.h	/^    list<T*>* m_pool; \/**< pool *\/$/;"	m	class:pool_c
 m_pool	utils.h	/^    pool_c<T>* m_pool; \/**< hash table entry pool *\/$/;"	m	class:hash_c
 m_poolexpand_unit	utils.h	/^    int       m_poolexpand_unit; \/**< pool expand unit *\/$/;"	m	class:pool_c
 m_poolsize	utils.h	/^    int       m_poolsize; \/**< pool size *\/$/;"	m	class:pool_c
+m_port	memory.h	/^        port_c**    m_port;$/;"	m	class:obm_c
 m_port	memory.h	/^    port_c**  m_port; \/**< cache port *\/$/;"	m	class:dcu_c
 m_port	router.h	/^    int m_port; \/**< credit port *\/$/;"	m	class:credit_c
 m_port_used	exec.h	/^    int     m_port_used[max_ALLOCQ]; \/**< number of currently used port *\/$/;"	m	class:exec_c
@@ -4307,6 +4344,7 @@ m_printed_inst_count	core.h	/^    Counter m_printed_inst_count; \/**< last print
 m_priority	dram.h	/^  int         m_priority;       \/**< priority *\/$/;"	m	struct:drb_entry_s
 m_priority	memreq_info.h	/^  Counter       m_priority;     \/**< priority *\/$/;"	m	struct:mem_req_s
 m_priority	pqueue.h	/^    int64_t m_priority; \/**< entry priority *\/$/;"	m	struct:pqueue_c::pqueue_entry_s
+m_probability	memory.h	/^        int         m_probability;$/;"	m	class:obm_c
 m_process	process_manager.h	/^  process_s           *m_process; \/**< point to the application belongs to *\/$/;"	m	struct:thread_s
 m_process	process_manager.h	/^  process_s* m_process;         \/**< pointer to the process *\/$/;"	m	struct:thread_trace_info_node_s
 m_process_count	macsim.h	/^		int m_process_count; \/**< number of processes *\/$/;"	m	class:macsim_c
@@ -4372,6 +4410,8 @@ m_retire_cycle	process_manager.h	/^  Counter m_retire_cycle;       \/**< retired
 m_retire_running	retire.h	/^    bool                        m_retire_running; \/**< retire enabled *\/$/;"	m	class:retire_c
 m_retired	process_manager.h	/^  bool    m_retired;            \/**< retired *\/$/;"	m	struct:block_schedule_info_s
 m_retired_thread_num	process_manager.h	/^  int     m_retired_thread_num; \/**< number of retired threads *\/$/;"	m	struct:block_schedule_info_s
+m_rht	memory.h	/^        rht_c*      m_rht;$/;"	m	class:obm_c
+m_rht_cache	memory.h	/^    obm_c** m_rht_cache; \/**< rht caches  constd added*\/$/;"	m	class:memory_c
 m_rid	dram.h	/^  int         m_rid;            \/**< row id *\/$/;"	m	struct:drb_entry_s
 m_rid_shift	dram.h	/^    uns m_rid_shift; \/**< row id shift *\/$/;"	m	class:dram_controller_c
 m_rob	allocate.h	/^    rob_c*          m_rob; \/**< reorder buffer *\/$/;"	m	class:allocate_c
@@ -4428,6 +4468,7 @@ m_simBase	frontend.h	/^    macsim_c*     m_simBase; \/**< macsim base class for 
 m_simBase	macsim.h	/^		macsim_c* m_simBase; \/**< self-reference for macro usage *\/$/;"	m	class:macsim_c
 m_simBase	map.h	/^    macsim_c* m_simBase;         \/**< macsim_c base class for simulation globals *\/$/;"	m	class:map_c
 m_simBase	map.h	/^    macsim_c* m_simBase;         \/**< macsim_c base class for simulation globals *\/$/;"	m	class:map_data_c
+m_simBase	memory.h	/^        macsim_c*   m_simBase;$/;"	m	class:obm_c
 m_simBase	memory.h	/^    macsim_c* m_simBase;         \/**< macsim_c base class for simulation globals *\/$/;"	m	class:memory_c
 m_simBase	memory.h	/^    macsim_c* m_simBase;         \/**< macsim_c base class for simulation globals *\/$/;"	m	class:queue_c
 m_simBase	memory.h	/^    macsim_c* m_simBase; \/**< macsim_c base class for simulation globals *\/$/;"	m	class:dcu_c
@@ -4513,6 +4554,7 @@ m_td_pending_req	memory.h	/^    unordered_map<Addr, bool> m_td_pending_req; \/**
 m_temp_inst_count	process_manager.h	/^  uint64_t             m_temp_inst_count; \/**< temp instruction count *\/$/;"	m	struct:thread_s
 m_temp_uop_count	process_manager.h	/^  uint64_t             m_temp_uop_count; \/**< temp uop count *\/$/;"	m	struct:thread_s
 m_terminal	dram.h	/^    ManifoldProcessor* m_terminal; \/**< connects to Iris interface->router *\/$/;"	m	class:dram_controller_c
+m_terminal	memory.h	/^        MainfoldProcessor* m_terminal;$/;"	m	class:obm_c
 m_terminal	memory.h	/^    ManifoldProcessor* m_terminal; \/**< terminal to the NoC router *\/$/;"	m	class:dcu_c
 m_terminated_tid	core.h	/^    unordered_map<int, bool> m_terminated_tid; \/**< ids of terminated threads *\/$/;"	m	class:core_c
 m_termination_check	macsim.h	/^    bool m_termination_check[2]; \/**< termination checking logic *\/$/;"	m	class:macsim_c
@@ -4542,6 +4584,7 @@ m_thread_stats	macsim.h	/^		unordered_map<int, thread_stat_s*> m_thread_stats; \
 m_thread_to_rob_map	rob_smc.h	/^    unordered_map<int, int> m_thread_to_rob_map; \/**< thread id to rob mapping *\/$/;"	m	class:smc_rob_c
 m_thread_trace_info	core.h	/^    unordered_map<int, thread_s*> m_thread_trace_info; \/**< thread trace information *\/$/;"	m	class:core_c
 m_thread_trace_info	process_manager.h	/^  thread_s**           m_thread_trace_info; \/**< thread trace information *\/$/;"	m	struct:process_s
+m_tid	memory.h	/^  int       m_tid;                \/**< thread id *\/$/;"	m	struct:rht_data_s
 m_tid	memory.h	/^  int     m_tid;                \/**< thread id *\/$/;"	m	struct:dcache_data_s
 m_tid	process_manager.h	/^  int        m_tid;             \/**< thread id *\/$/;"	m	struct:thread_trace_info_node_s
 m_tid_to_appl_map	core.h	/^    unordered_map<int, process_s *> m_tid_to_appl_map; \/**< get application id with tid *\/$/;"	m	class:core_c
@@ -4629,6 +4672,7 @@ m_valueProvided	knob.h	/^    bool   m_valueProvided; \/**< value provided *\/$/;
 m_valueString	knob.h	/^    string m_valueString; \/**< knob value in string *\/$/;"	m	class:abstract_knob_c
 m_valuesFromCommandLineSwitches	knob.h	/^    map<string, string, ltstr_s> m_valuesFromCommandLineSwitches; \/**< values from command *\/$/;"	m	class:KnobsContainer
 m_valuesFromFile	knob.h	/^    map<string, string, ltstr_s> m_valuesFromFile; \/**< knob values from the file *\/$/;"	m	class:KnobsContainer
+m_vb_tag	memory.h	/^  Addr      m_vb_tag;$/;"	m	struct:rht_data_s
 m_vc	router.h	/^    int m_vc; \/**< credit vc *\/$/;"	m	class:credit_c
 m_vc_batch	router.h	/^    bool       m_vc_batch; \/**< VCA batch *\/$/;"	m	class:flit_c
 m_wb_queue	memory.h	/^    queue_c*  m_wb_queue; \/**< write-back queue *\/$/;"	m	class:dcu_c
@@ -4686,6 +4730,8 @@ noc_entry_s	noc.h	/^} noc_entry_s;$/;"	t	typeref:struct:noc_entry_s
 null_cache_line_fields	cache.cc	/^bool cache_c::null_cache_line_fields(cache_entry_c *line)$/;"	f	class:cache_c
 numTokens	knob.cc	/^int KnobEntryTokenizer::numTokens() $/;"	f	class:KnobEntryTokenizer
 num_states	pref_stride.h	/^  uns     num_states; \/**< number of states *\/$/;"	m	struct:stride_index_table_entry_struct
+obm_c	memory.cc	/^obm_c::obm_c(int id, memory_c* mem, macsim_c* simBase)$/;"	f	class:obm_c
+obm_c	memory.h	/^class obm_c$/;"	c
 on_complete	dram.cc	/^void dram_controller_c::on_complete(drb_entry_s* req)$/;"	f	class:dram_controller_c
 on_insert	dram.cc	/^void dram_controller_c::on_insert(mem_req_s* req, int bid, int rid, int cid)$/;"	f	class:dram_controller_c
 on_run_a_cycle	dram.cc	/^void dram_controller_c::on_run_a_cycle()$/;"	f	class:dram_controller_c
@@ -4813,6 +4859,7 @@ print_mshr	memory.cc	/^void memory_c::print_mshr(void)$/;"	f	class:memory_c
 print_noc	bug_detector.cc	/^void bug_detector_c::print_noc()$/;"	f	class:bug_detector_c
 print_req	dram.cc	/^void dram_controller_c::print_req(void)$/;"	f	class:dram_controller_c
 priority	pref_common.h	/^  int     priority;             \/**< priority this prefetcher gets in the pecking order *\/$/;"	m	struct:pref_info_s
+process	keep_plus_section_in_patch.py	/^    def process(self):$/;"	m	class:keep_patch
 process_fill_queue	memory.cc	/^void dcu_c::process_fill_queue()$/;"	f	class:dcu_c
 process_ifetch	frontend.cc	/^FRONTEND_MODE frontend_c::process_ifetch(unsigned int tid, frontend_s* fetch_data)$/;"	f	class:frontend_c
 process_in_queue	memory.cc	/^void dcu_c::process_in_queue()$/;"	f	class:dcu_c
@@ -4849,6 +4896,7 @@ receive_req	router.cc	/^mem_req_s* router_c::receive_req(int dir)$/;"	f	class:ro
 recnt	pref_stride.h	/^  int     recnt; \/**< recount *\/$/;"	m	struct:stride_index_table_entry_struct
 reconv_data_s	frontend.h	/^typedef struct reconv_data_s {$/;"	s
 reconv_data_s	frontend.h	/^} reconv_data_s;$/;"	t	typeref:struct:reconv_data_s
+record	memory.cc	/^bool obm_c::record(mem_req_s* req,Addr repl_addr)$/;"	f	class:obm_c
 recove_data_s	global_defs.h	/^typedef struct reconv_data_s recove_data_s;$/;"	t	typeref:struct:reconv_data_s
 recover	bp_gshare.cc	/^void bp_gshare_c::recover(recovery_info_c *recovery_info)$/;"	f	class:bp_gshare_c
 recovery_info_c	uop.h	/^    recovery_info_c() {}$/;"	f	class:recovery_info_c
@@ -4868,9 +4916,15 @@ release_entry	utils.h	/^    void release_entry(T* entry)$/;"	f	class:pool_c
 repeat_traces	retire.cc	/^void retire_c::repeat_traces(process_s* process)$/;"	f	class:retire_c
 report	debug_macros.h	53;"	d
 report	debug_macros.h	57;"	d
+report_req	debug_macros.h	60;"	d
 reserve_rob	rob_smc.cc	/^int smc_rob_c::reserve_rob(int thread_id) $/;"	f	class:smc_rob_c
 reset	dram.cc	/^void drb_entry_s::reset()$/;"	f	class:drb_entry_s
+reset	keep_plus_section_in_patch.py	/^    def reset(self):$/;"	m	class:keep_patch
 retire_c	retire.h	/^class retire_c$/;"	c
+rht_c	cache.h	/^        rht_c(string name, int num_set, int assoc, int line_size, int data_size, int bank_num,$/;"	f	class:rht_c
+rht_c	cache.h	/^class rht_c: public cache_c$/;"	c
+rht_data_s	memory.h	/^typedef struct rht_data_s {$/;"	s
+rht_data_s	memory.h	/^} rht_data_s;$/;"	t	typeref:struct:rht_data_s
 rob_c	rob.cc	/^rob_c::rob_c(Unit_Type type, macsim_c* simBase) $/;"	f	class:rob_c
 rob_c	rob.h	/^class rob_c$/;"	c
 router_c	router.cc	/^router_c::router_c(macsim_c* simBase, int type, int id)$/;"	f	class:router_c
@@ -5168,6 +5222,7 @@ xtestbit	map.cc	66;"	d	file:
 ~multi_key_map_c	utils.cc	/^multi_key_map_c::~multi_key_map_c()$/;"	f	class:multi_key_map_c
 ~no_cache_c	memory.cc	/^no_cache_c::~no_cache_c()$/;"	f	class:no_cache_c
 ~noc_c	noc.cc	/^noc_c::~noc_c()$/;"	f	class:noc_c
+~obm_c	memory.cc	/^obm_c::~obm_c()$/;"	f	class:obm_c
 ~pool_c	utils.h	/^    ~pool_c()$/;"	f	class:pool_c
 ~pqueue_c	pqueue.h	/^    ~pqueue_c()$/;"	f	class:pqueue_c
 ~pref_base_c	pref.h	/^    virtual ~pref_base_c() {}$/;"	f	class:pref_base_c
@@ -5180,6 +5235,7 @@ xtestbit	map.cc	66;"	d	file:
 ~readonly_cache_c	readonly_cache.cc	/^readonly_cache_c::~readonly_cache_c()$/;"	f	class:readonly_cache_c
 ~recovery_info_c	uop.h	/^    ~recovery_info_c() {}$/;"	f	class:recovery_info_c
 ~retire_c	retire.cc	/^retire_c::~retire_c()$/;"	f	class:retire_c
+~rht_c	cache.cc	/^rht_c::~rht_c()$/;"	f	class:rht_c
 ~rob_c	rob.cc	/^rob_c::~rob_c()$/;"	f	class:rob_c
 ~router_c	router.cc	/^router_c::~router_c()$/;"	f	class:router_c
 ~router_wrapper_c	router.cc	/^router_wrapper_c::~router_wrapper_c()$/;"	f	class:router_wrapper_c

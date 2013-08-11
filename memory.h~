@@ -76,21 +76,19 @@ typedef struct dcache_data_s {
   int     m_tid;                /**< thread id */
 } dcache_data_s;
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief data cache data structure
-///////////////////////////////////////////////////////////////////////////////////////////////
-typedef struct rht_data_s {
-  bool      m_dirty;              /**< line dirty */
-  Counter   m_fetch_cycle;        /**< fetched cycle */
-  int       m_core_id;            /**< core id */
-  Addr      m_pc;                 /**< pc address */
-  int       m_tid;                /**< thread id */
-  Addr      m_ib_tag;
-  Addr      m_vb_tag;
-  Signature m_ib_signature;
-} rht_data_s;
-
+ ///////////////////////////////////////////////////////////////////////////////////////////////
+ /// \brief data cache data structure
+ ///////////////////////////////////////////////////////////////////////////////////////////////
+ typedef struct rht_data_s {
+   bool      m_dirty;              /**< line dirty */
+   Counter   m_fetch_cycle;        /**< fetched cycle */
+   int       m_core_id;            /**< core id */
+   Addr      m_pc;                 /**< pc address */
+   int       m_tid;                /**< thread id */
+   Addr      m_ib_tag;
+   Addr      m_vb_tag;
+   Signature m_ib_signature;
+ } rht_data_s;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief Memory queue class
@@ -343,79 +341,77 @@ class dcu_c
     Counter m_cycle; /**< clock cycle */
 };
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-/// \brief optimal bypass monitor class constd added
-///////////////////////////////////////////////////////////////////////////////////////////////
-class obm_c
-{
-    public:
-        obm_c(int id,memory_c* mem, macsim_c* simbase);
-
-        ~obm_c();
-
-        void init(bool done, bool disbale);
-        
-        // get cache line address
-        Addr base_addr(Addr addr);
-        
-        int bank_id(Addr addr);
-
-        int get_read_port(int bank_id);
-
-        int line_size();
-        
-        //check if rht has invalid entry
-        //bool has_invalid_entry(int set, cache_entry_c*);
-        
-        //check if record access on address addr
-        bool record(mem_req_s* req,Addr addr);
-
-        //void insert(Addr,Signature, Addr);
-
-        bool bypass(Signature);
-
-        //bool select_victim(Addr,cache_entry_c*);
-        //access the rhistory table
-        //int access(Addr addr);
-
-        void run_a_cycle();
-        
-        //access the record history table according to the address and line address
-        bool access_rht(Addr addr, Signature sig, Addr *line_addr);
-        
-        bool access_rht_on_cache_miss(Addr addr,Signature sig, Addr *line_addr);
-
-    private:
-        obm_c();
-    
-    private:
-        int         m_id;
-        int         m_probability;
-        //int         m_noc_id;
-        bool        m_disable;
-        bool        m_bypass;
-        rht_c*      m_rht;
-        port_c**    m_port;
-        bool        m_done;
-        int         m_num_set;
-        int         m_assoc;
-        int         m_line_size;
-        int         m_banks;
-        int         m_latency;
-        int         m_num_read_port;
-        int         m_num_write_port;
-        map<Signature, int> BDCT;
-        memory_c*   m_memory;
-        macsim_c*   m_simBase;
-#ifdef IRIS
-        MainfoldProcessor* m_terminal;
-#endif
-
-        //clock
-        Counter m_cycle;
-};
-
+ ///////////////////////////////////////////////////////////////////////////////////////////////
+ /// \brief optimal bypass monitor class constd added
+ ///////////////////////////////////////////////////////////////////////////////////////////////
+ class obm_c
+ {
+     public:
+         obm_c(int id,memory_c* mem, macsim_c* simbase);
+ 
+         ~obm_c();
+ 
+         void init(bool done, bool disbale);
+         
+         // get cache line address
+         Addr base_addr(Addr addr);
+         
+         int bank_id(Addr addr);
+ 
+         int get_read_port(int bank_id);
+ 
+         int line_size();
+         
+         //check if rht has invalid entry
+         //bool has_invalid_entry(int set, cache_entry_c*);
+         
+         //check if record access on address addr
+         bool record(mem_req_s* req,Addr addr);
+ 
+         //void insert(Addr,Signature, Addr);
+ 
+         bool bypass(Signature);
+ 
+         //bool select_victim(Addr,cache_entry_c*);
+         //access the rhistory table
+         //int access(Addr addr);
+ 
+         void run_a_cycle();
+         
+         //access the record history table according to the address and line address
+         bool access_rht(Addr addr, Signature sig, Addr *line_addr);
+         
+         bool access_rht_on_cache_miss(Addr addr,Signature sig, Addr *line_addr);
+ 
+     private:
+         obm_c();
+     
+     private:
+         int         m_id;
+         int         m_probability;
+         //int         m_noc_id;
+         bool        m_disable;
+         bool        m_bypass;
+         rht_c*      m_rht;
+         port_c**    m_port;
+         bool        m_done;
+         int         m_num_set;
+         int         m_assoc;
+         int         m_line_size;
+         int         m_banks;
+         int         m_latency;
+         int         m_num_read_port;
+         int         m_num_write_port;
+         map<Signature, int> BDCT;
+         memory_c*   m_memory;
+         macsim_c*   m_simBase;
+ #ifdef IRIS
+         MainfoldProcessor* m_terminal;
+ #endif
+ 
+         //clock
+         Counter m_cycle;
+ };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 /// \brief memory system
@@ -452,8 +448,8 @@ class memory_c
      * @return true, otherwise
      */
     bool new_mem_req(Mem_Req_Type type, Addr addr, uns size, bool cache_hit, bool with_data, 
-            uns delay, uop_c* uop, function<bool (mem_req_s*)> done_func, Counter unique_num, 
-            pref_req_info_s* pref_info, int core_id, int thread_id, bool ptx);
+        uns delay, uop_c* uop, function<bool (mem_req_s*)> done_func, Counter unique_num, 
+        pref_req_info_s* pref_info, int core_id, int thread_id, bool ptx);
 
     /**
      * Access first-level cache from execution stage
@@ -576,7 +572,6 @@ class memory_c
     
     int *m_iris_node_id; /**< noc id for iris network nodes */
 
-    obm_c** m_rht_cache; /**< rht caches  constd added*/
   protected:
     /**
      * Allocate a new request from free list
@@ -586,8 +581,8 @@ class memory_c
     /**
      * Initialize a new request
      */
-    void init_new_req(mem_req_s* req, Mem_Req_Type type, Addr addr, int size,bool with_data, int delay, \
-        uop_c* uop, function<bool (mem_req_s*)> done_func, Counter unique_num, \
+    void init_new_req(mem_req_s* req, Mem_Req_Type type, Addr addr, int size, bool with_data, \
+        int delay, uop_c* uop, function<bool (mem_req_s*)> done_func, Counter unique_num, \
         Counter priority, int core_id, int thread_id, bool ptx);
 
     /**
@@ -632,8 +627,8 @@ class memory_c
     int m_noc_index_base[MEM_LAST]; /**< component id of each memory hierarchy */
     int m_noc_id_base[MEM_LAST]; /**< noc id base per level */
     Counter m_stop_prefetch; /**< when set, no prefetches will be inserted */
-    int m_dram_interleave_factor;
     int m_l3_interleave_factor; /**< mask bit for L3 id */
+    int m_dram_interleave_factor; /**< mask bit for dram id */
     macsim_c* m_simBase;         /**< macsim_c base class for simulation globals */
     map<int, int>* m_dst_map; /**< destination id mapping function */
 
@@ -642,7 +637,7 @@ class memory_c
     unordered_map<Addr, bool> m_td_pending_req; /**< pending requests in tag directory */
 
     Counter m_cycle; /**< clock cycle */
-    pool_c<mem_req_s> *m_mem_req_pool;
+    pool_c<mem_req_s> *m_mem_req_pool; /**< pool for write requests in ptx simulations */
 }; 
 
 
