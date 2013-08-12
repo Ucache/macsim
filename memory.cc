@@ -830,6 +830,11 @@ void dcu_c::process_in_queue()
         POWER_CORE_EVENT(req->m_core_id, POWER_DCACHE_R + (m_level -1));
       }
       else {
+        //constd added
+        printf("Catch HIT@ m_level=%d, req:%lld, core_id:%d, ptx:%d, appl_id:%d, thread_id:%d,GPU block id:%d, state:%d, request type:%d\n",m_level,req->m_addr,req->m_core_id,\
+                req->m_ptx,req->m_appl_id,req->m_thread_id,req->m_block_id,req->m_state,\
+                req->m_type);
+        //condtd added ended
         POWER_EVENT(POWER_L3CACHE_R );
       }
 
@@ -896,6 +901,12 @@ void dcu_c::process_in_queue()
     // Cache miss or Disabled cache
     // -------------------------------------
     else {
+        if (m_level == MEM_L3)
+        {
+            printf("Catch MISS@ m_level=%d , req:%lld, core_id:%d, ptx:%d, appl_id:%d, thread_id:%d, GPU block id:%d, state:%d, request type:%d\n",m_level,req->m_addr,req->m_core_id,\
+                req->m_ptx,req->m_appl_id,req->m_thread_id,req->m_block_id,req->m_state,\
+                req->m_type);
+        }
       // hardware prefetcher training
       if (!m_disable) {
         m_simBase->m_core_pointers[req->m_core_id]->train_hw_pref(m_level, req->m_thread_id, \
